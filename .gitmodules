@@ -1,3 +1,3 @@
-[submodule "public/js/libsignal"]
-	path = public/js/libsignal
-	url = https://github.com/signalapp/libsignal-protocol-javascript.git
+[submodule "public/js/signal-protocol"]
+    path = public/js/signal-protocol
+    url = https://github.com/elsehow/signal-protocol.git

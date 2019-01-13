@@ -29,78 +29,123 @@
 </template>
 
 <script>
-
 import UniverseButton from '@/components/UniverseButton'
+
+
+
+
+function SignalProtocolStore() {
+  this.store = {};
+}
+
+SignalProtocolStore.prototype = {
+  getIdentityKeyPair: function() {
+    return Promise.resolve(this.get('identityKey'));
+  },
+  getLocalRegistrationId: function() {
+    return Promise.resolve(this.get('registrationId'));
+  },
+  put: function(key, value) {
+    if (key === undefined || value === undefined || key === null || value === null)
+      throw new Error("Tried to store undefined/null");
+    this.store[key] = value;
+  },
+  get: function(key, defaultValue) {
+    if (key === null || key === undefined)
+      throw new Error("Tried to get value for undefined/null key");
+    if (key in this.store) {
+      return this.store[key];
+    } else {
+      return defaultValue;
+    }
+  },
+  remove: function(key) {
+    if (key === null || key === undefined)
+      throw new Error("Tried to remove value for undefined/null key");
+    delete this.store[key];
+  },
+
+  isTrustedIdentity: function(identifier, identityKey) {
+    if (identifier === null || identifier === undefined) {
+      throw new Error("tried to check identity key for undefined/null key");
+    }
+    if (!(identityKey instanceof ArrayBuffer)) {
+      throw new Error("Expected identityKey to be an ArrayBuffer");
+    }
+    var trusted = this.get('identityKey' + identifier);
+    if (trusted === undefined) {
+      return Promise.resolve(true);
+    }
+    return Promise.resolve(util.toString(identityKey) === util.toString(trusted));
+  },
+  loadIdentityKey: function(identifier) {
+    if (identifier === null || identifier === undefined)
+      throw new Error("Tried to get identity key for undefined/null key");
+    return Promise.resolve(this.get('identityKey' + identifier));
+  },
+  saveIdentity: function(identifier, identityKey) {
+    if (identifier === null || identifier === undefined)
+      throw new Error("Tried to put identity key for undefined/null key");
+    return Promise.resolve(this.put('identityKey' + identifier, identityKey));
+  },
+
+  /* Returns a prekeypair object or undefined */
+  loadPreKey: function(keyId) {
+    var res = this.get('25519KeypreKey' + keyId);
+    if (res !== undefined) {
+      res = { pubKey: res.pubKey, privKey: res.privKey };
+    }
+    return Promise.resolve(res);
+  },
+  storePreKey: function(keyId, keyPair) {
+    return Promise.resolve(this.put('25519KeypreKey' + keyId, keyPair));
+  },
+  removePreKey: function(keyId) {
+    return Promise.resolve(this.remove('25519KeypreKey' + keyId));
+  },
+
+  /* Returns a signed keypair object or undefined */
+  loadSignedPreKey: function(keyId) {
+    var res = this.get('25519KeysignedKey' + keyId);
+    if (res !== undefined) {
+      res = { pubKey: res.pubKey, privKey: res.privKey };
+    }
+    return Promise.resolve(res);
+  },
+  storeSignedPreKey: function(keyId, keyPair) {
+    return Promise.resolve(this.put('25519KeysignedKey' + keyId, keyPair));
+  },
+  removeSignedPreKey: function(keyId) {
+    return Promise.resolve(this.remove('25519KeysignedKey' + keyId));
+  },
+
+  loadSession: function(identifier) {
+    return Promise.resolve(this.get('session' + identifier));
+  },
+  storeSession: function(identifier, record) {
+    return Promise.resolve(this.put('session' + identifier, record));
+  },
+  removeSession: function(identifier) {
+    return Promise.resolve(this.remove('session' + identifier));
+  },
+  removeAllSessions: function(identifier) {
+    for (var id in this.store) {
+      if (id.startsWith('session' + identifier)) {
+        delete this.store[id];
+      }
+    }
+    return Promise.resolve();
+  }
+};
+
+
+
+
+var KeyHelper = libsignal.KeyHelper;
 
 var debug = console;
 
-var cry = new function(){
 
-  /* KEY STORING */
-  this.publicStore = {},
-  this.secureStore = {},
-  this.put = function(key, value) {
-    if (key === undefined || value === undefined || key === null || value === null)
-      throw new Error("Tried to store undefined/null");
-    this.publicStore[key] = value;
-  },
-  this.putSecure = function(key, value) {
-    if (key === undefined || value === undefined || key === null || value === null)
-      throw new Error("Tried to store undefined/null");
-    this.secureStore[key] = value;
-  },
-  this.storePreKey = function(keyId,keyPair) {
-    this.put('25519KeypreKey' + keyId, keyPair)
-  }
-  this.storeIdentityKeypair = function(userIdentifier, identityKeyPair){
-    this.put('IdentityPubKey'+userIdentifier, identityKeyPair.pubKey);
-    this.putSecure('IdentityPrivKey'+userIdentifier, identityKeyPair.privKey);
-  }
-
-  /* preKeyGeneration */
-
-  this.generateSignedPreKey = function(keyId,identityKeyPair, cb){
-        debug.log('generate signed prekey '+keyId+'...');
-        libsignal.KeyHelper.generateSignedPreKey(identityKeyPair, keyId).then(function(signedPreKey) {
-            debug.log('...done: ',signedPreKey);
-            cb(signedPreKey);
-        });
-  };
-  this.generateUserKeys = function(userIdentifier,cb){
-    var self = this;
-    var signal = libsignal;
-    var KeyHelper = signal.KeyHelper;
-
-    debug.log('start generating user keys');
-    debug.log('generate registration id...');
-    var registrationId = KeyHelper.generateRegistrationId();
-    // Store registrationId somewhere durable and safe.
-    debug.log('...done: ',registrationId);
-
-    debug.log('generate identityKeyPair...');
-
-    KeyHelper.generateIdentityKeyPair().then(function(identityKeyPair) {
-        // keyPair -> { pubKey: ArrayBuffer, privKey: ArrayBuffer }
-        // Store identityKeyPair somewhere durable and safe.
-        
-        debug.log('... done', identityKeyPair);
-        var keyId = 1;
-        self.generateSignedPreKey(keyId,identityKeyPair,function(signedPreKey){
-            self.storePreKey(signedPreKey.keyId, signedPreKey.keyPair);
-            console.log(self.publicStore);
-        })
-    });
-
-    /*var keyId = 10;
-    
-    KeyHelper.generatePreKey(keyId).then(function(preKey) {
-        self.storePreKey(preKey.keyId, preKey.keyPair);
-        console.log(self.publicStore);
-    });*/
-    // Register preKeys and signedPreKey with the server
-
-  };
-}
 
 export default {  
   name: 'Registration',
@@ -113,7 +158,142 @@ export default {
   },
   mounted:function(){
 
-    cry.generateUserKeys();
+
+
+
+
+
+libsignal.SignalProtocolStore = SignalProtocolStore;
+console.log(SignalProtocolStore);
+
+function generateIdentity(store) {
+    return Promise.all([
+        KeyHelper.generateIdentityKeyPair(),
+        KeyHelper.generateRegistrationId(),
+    ]).then(function(result) {
+      console.log(store);
+        store.put('identityKey', result[0]);
+        store.put('registrationId', result[1]);
+    });
+}
+
+function generatePreKeyBundle(store, preKeyId, signedPreKeyId) {
+    return Promise.all([
+        store.getIdentityKeyPair(),
+        store.getLocalRegistrationId()
+    ]).then(function(result) {
+        var identity = result[0];
+        var registrationId = result[1];
+
+        return Promise.all([
+            KeyHelper.generatePreKey(preKeyId),
+            KeyHelper.generateSignedPreKey(identity, signedPreKeyId),
+        ]).then(function(keys) {
+            var preKey = keys[0]
+            var signedPreKey = keys[1];
+
+            store.storePreKey(preKeyId, preKey.keyPair);
+            store.storeSignedPreKey(signedPreKeyId, signedPreKey.keyPair);
+
+            return {
+                identityKey: identity.pubKey,
+                registrationId : registrationId,
+                preKey:  {
+                    keyId     : preKeyId,
+                    publicKey : preKey.keyPair.pubKey
+                },
+                signedPreKey: {
+                    keyId     : signedPreKeyId,
+                    publicKey : signedPreKey.keyPair.pubKey,
+                    signature : signedPreKey.signature
+                }
+            };
+        });
+    });
+}
+var ALICE_ADDRESS = new libsignal.SignalProtocolAddress("xxxxxxxxx", 1);
+var BOB_ADDRESS   = new libsignal.SignalProtocolAddress("yyyyyyyyyyyyy", 1);
+
+    var aliceStore = new libsignal.SignalProtocolStore();
+
+    var bobStore = new libsignal.SignalProtocolStore();
+    var bobPreKeyId = 1337;
+    var bobSignedKeyId = 1;
+
+    var Curve = libsignal.Curve;
+
+        Promise.all([
+            generateIdentity(aliceStore),
+            generateIdentity(bobStore),
+        ]).then(function() {
+            return generatePreKeyBundle(bobStore, bobPreKeyId, bobSignedKeyId);
+        }).then(function(preKeyBundle) {
+            console.log('got preKeyBundle');
+
+            var builder = new libsignal.SessionBuilder(aliceStore, BOB_ADDRESS);
+            return builder.processPreKey(preKeyBundle).then(function() {
+              console.log('makarenaa!');
+              console.log(aliceStore);
+              console.log('makarena!');
+
+              var enc = new TextEncoder(); // always utf-8
+              var msg = enc.encode("This is a string converted to a Uint8Array");
+              console.log(msg);
+
+              var originalMessage = msg;
+              var aliceSessionCipher = new libsignal.SessionCipher(aliceStore, BOB_ADDRESS);
+              var bobSessionCipher = new libsignal.SessionCipher(bobStore, ALICE_ADDRESS);
+
+              aliceSessionCipher.encrypt(originalMessage).then(function(ciphertext) {
+
+                console.log('ciphertext');
+                console.log(ciphertext);
+
+                  // check for ciphertext.type to be 3 which includes the PREKEY_BUNDLE
+                  return bobSessionCipher.decryptPreKeyWhisperMessage(ciphertext.body, 'binary');
+
+              }).then(function(plaintext) {
+
+
+                var enc = new TextDecoder("utf-8");
+                plaintext = enc.decode(plaintext);
+
+                  console.log('pt');
+                  console.log(plaintext);
+                  alert(plaintext);
+
+              });
+
+              
+              bobSessionCipher.encrypt(originalMessage).then(function(ciphertext) {
+
+                  return aliceSessionCipher.decryptWhisperMessage(ciphertext.body, 'binary');
+
+              }).then(function(plaintext) {
+
+                  assertEqualArrayBuffers(plaintext, originalMessage);
+
+              });
+              
+
+            });
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //cry.generateUserKeys();
   },
   methods: {
     register_user(){
