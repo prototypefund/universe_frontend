@@ -1,6 +1,5 @@
 <template>
           <div class="guestArea">
-            <img src="~@/assets/gfx/guest/guest_header.svg" alt="universe" id="header">
             <div class="guestBox registerBox">
                 <h2>Sign Up</h2>
                 <div class="pull-left">
@@ -22,22 +21,31 @@
 
 
                       <input type="password" style="margin-bottom:15px;" v-model="passwordRepeat" placeholder="Repeat Password" v-on:change="onRegistrationType" required>
-
                       <span v-if="this.showErrors.indexOf('password_missmatch') > -1" class="regError">
                         <a>The passwords don't match</a>
                         <div class="arrow-right"></div>
                       </span>
 
-                      <div>
-                        <span style="display: inline-block;padding-top: 10px"><input type="checkbox" style="display: inline-block;" class="checkRegBox" name="checkTemrs">
+                      <div class="checkboxContainer">
+                        <span><input type="checkbox" v-model="terms">
                           <label for="checkTerms">I accept the <a href="http://wiki.transparency-everywhere.com/en/index.php/Policy" target="_blank">terms</a></label>
+                        </span>
+                      </div>
+                      <span v-if="this.showErrors.indexOf('terms') > -1" class="regError terms">
+                        <a>You have to accept the terms</a>
+                        <div class="arrow-right"></div>
+                      </span>
+
+                      <div class="checkboxContainer">
+                        <span><input type="checkbox" v-model="uploadPrivateKey">
+                          <label for="checkTerms">Upload private key</label>
                         </span>
                       </div>
 
 
 
 
-                      <universeButton text="Sign me up!" :click="submitRegistration"></universeButton>
+                      <universeButton text="Sign me up!" :click="submitRegistration" style="float: right;margin-right: 15px;margin-top: -8px;"></universeButton>
                     </form>
                 </div>
                 <img v-if="showLoadingArea" src="~@/assets/gfx/loading-bubbles.svg" width="150" height="150">
@@ -59,6 +67,8 @@ export default {
       passwordRepeat: '',
       showErrors:[],
       passwordError:'',
+      terms:false,
+      uploadPrivateKey:true,
       registrationSubmitted:false
     }
   },
@@ -127,6 +137,14 @@ export default {
       else if (this.showErrors.indexOf('password_missmatch') !== -1) 
         this.showErrors.splice(this.showErrors.indexOf('password_missmatch'), 1);
 
+      //check if terms are accepted
+      if(!this.terms){
+        if(this.showErrors.indexOf('terms') == -1)
+          this.showErrors.push('terms');
+      }
+      else if (this.showErrors.indexOf('terms') !== -1) 
+        this.showErrors.splice(this.showErrors.indexOf('terms'), 1);
+
       var password_strength = this.checkPasswordStrength(this.password);
       if(!password_strength)
         password_strength = 0;
@@ -167,19 +185,29 @@ export default {
   background-color: #37474f;
   box-shadow: 1px 3px 8px 0px rgba(0, 0, 0, 0.3);
   width: 365px;
-  height: 270px;
   float: left;
   color: #FFF;
   margin-bottom: 10px;
   overflow: auto;
-  padding: 15px 20px;
+  padding: 20px 20px;
+}
+
+.checkboxContainer{
+  margin: 7px 0;
+  clear: both;
+  float: left;
+}
+
+.guestBox h2{
+  margin:0;
 }
 
 .guestBox input[type="text"], .guestBox input[type="password"] {
   width: 320px;
   height: 40px;
-  margin-top: 10px;
+  margin: 15px 0;
   border: none;
+  padding: 0 15px;
 }
 
 .guestBox input {
@@ -190,14 +218,14 @@ export default {
 .regError {
   position: absolute;
   background-color: #790125;
-  margin-top: -35px;
+  margin-top: -50px;
   height: 30px;
   line-height: 30px;
   color: #FFF !important;
   padding-right: 5px;
   text-align: left;
-  width: 320px;
-  margin-left: 325px;
+  width: auto;
+  margin-left: 353px;
   display: inline;
   background: rgb(121, 1, 37);
 }
@@ -217,5 +245,15 @@ export default {
     margin-left: -14px;
     float: left;
     padding: 0;
+}
+
+.regError.terms{
+  margin-top: 3px;
+  margin-left:20px;
+}
+
+#registrationForm input[type="checkbox"]{
+    display: inline-block;
+    height: 9px;
 }
 </style>

@@ -24,13 +24,13 @@ export default {
 
 .universe-button{
   color: #FFF;
-  background-color:  #00bcd4;
+  background-color: #00bcd4;
   min-width: 100px;
   margin-top: 2.5px;
-  height: 35px;
-  padding: 7px 7px;
+  height: 21px;
+  padding: 9px 7px;
   text-align: center;
-  font-size:16px;
+  font-size: 16px;
   border: none;
   display: inline-block;
   cursor: pointer;
