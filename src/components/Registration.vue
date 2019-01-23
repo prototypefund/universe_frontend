@@ -4,23 +4,40 @@
             <div class="guestBox registerBox">
                 <h2>Sign Up</h2>
                 <div class="pull-left">
-                    <form id="registrationForm">
-                    <input type="text" id="regUsername" placeholder="Your Username" class="checkReg">
-                    <span id="checkUsernameStatus" class="regError">
-                      <a>&nbsp;to short</a>
-                      <div class="arrow-right"></div>
-                    </span>
-                    <input type="password" id="password" placeholder="Your Password" class="checkReg">
-                    <span id="checkPasswordStatus" class="regError" style="display: inline; background: rgb(121, 1, 37);">
-                      <a>Uh-Oh! My mom could crack that password!</a>
-                      <div class="arrow-right" style="border-right: 15px solid rgb(121, 1, 37);"></div>
-                    </span>
-                    <input type="password" style="margin-bottom:15px;" id="passwordRepeat" placeholder="Repeat Password" class="checkReg">
-                    <span styel="display: inline-block;padding-top: 10px"><input type="checkbox" style="display: inline-block;" class="checkRegBox" name="checkTemrs">
-                      <label for="checkTerms">I accept the <a href="http://wiki.transparency-everywhere.com/en/index.php/Policy" target="_blank">terms</a></label>
-                    </span>
-                    <input type="hidden" value="" id="checkReg">
-                    <universeButton text="Sign me up!" :click="register_user"></universeButton>
+                    <form id="registrationForm" v-on:submit.prevent="submitRegistration">
+                      <input  type="text"placeholder="Your Username" v-model="username" v-on:change="onRegistrationType">
+
+                      <span v-if="this.showErrors.indexOf('username') > -1" id="checkUsernameStatus" class="regError">
+                        <a>&nbsp;to short</a>
+                        <div class="arrow-right"></div>
+                      </span>
+
+
+                      <input type="password" id="password" placeholder="Your Password" v-model="password" v-on:type="onRegistrationType">
+
+                      <span v-if="this.showErrors.indexOf('password_strength') > -1" class="regError">
+                        <a>{{passwordError}}</a>
+                        <div class="arrow-right"></div>
+                      </span>
+
+
+                      <input type="password" style="margin-bottom:15px;" v-model="passwordRepeat" placeholder="Repeat Password" v-on:change="onRegistrationType" required>
+
+                      <span v-if="this.showErrors.indexOf('password_missmatch') > -1" class="regError">
+                        <a>The passwords don't match</a>
+                        <div class="arrow-right"></div>
+                      </span>
+
+                      <div>
+                        <span style="display: inline-block;padding-top: 10px"><input type="checkbox" style="display: inline-block;" class="checkRegBox" name="checkTemrs">
+                          <label for="checkTerms">I accept the <a href="http://wiki.transparency-everywhere.com/en/index.php/Policy" target="_blank">terms</a></label>
+                        </span>
+                      </div>
+
+
+
+
+                      <universeButton text="Sign me up!" :click="submitRegistration"></universeButton>
                     </form>
                 </div>
                 <img v-if="showLoadingArea" src="~@/assets/gfx/loading-bubbles.svg" width="150" height="150">
@@ -31,273 +48,107 @@
 <script>
 import UniverseButton from '@/components/UniverseButton'
 
-
-
-
-function SignalProtocolStore() {
-  this.store = {};
-}
-
-SignalProtocolStore.prototype = {
-  getIdentityKeyPair: function() {
-    return Promise.resolve(this.get('identityKey'));
-  },
-  getLocalRegistrationId: function() {
-    return Promise.resolve(this.get('registrationId'));
-  },
-  put: function(key, value) {
-    if (key === undefined || value === undefined || key === null || value === null)
-      throw new Error("Tried to store undefined/null");
-    this.store[key] = value;
-  },
-  get: function(key, defaultValue) {
-    if (key === null || key === undefined)
-      throw new Error("Tried to get value for undefined/null key");
-    if (key in this.store) {
-      return this.store[key];
-    } else {
-      return defaultValue;
-    }
-  },
-  remove: function(key) {
-    if (key === null || key === undefined)
-      throw new Error("Tried to remove value for undefined/null key");
-    delete this.store[key];
-  },
-
-  isTrustedIdentity: function(identifier, identityKey) {
-    if (identifier === null || identifier === undefined) {
-      throw new Error("tried to check identity key for undefined/null key");
-    }
-    if (!(identityKey instanceof ArrayBuffer)) {
-      throw new Error("Expected identityKey to be an ArrayBuffer");
-    }
-    var trusted = this.get('identityKey' + identifier);
-    if (trusted === undefined) {
-      return Promise.resolve(true);
-    }
-    return Promise.resolve(util.toString(identityKey) === util.toString(trusted));
-  },
-  loadIdentityKey: function(identifier) {
-    if (identifier === null || identifier === undefined)
-      throw new Error("Tried to get identity key for undefined/null key");
-    return Promise.resolve(this.get('identityKey' + identifier));
-  },
-  saveIdentity: function(identifier, identityKey) {
-    if (identifier === null || identifier === undefined)
-      throw new Error("Tried to put identity key for undefined/null key");
-    return Promise.resolve(this.put('identityKey' + identifier, identityKey));
-  },
-
-  /* Returns a prekeypair object or undefined */
-  loadPreKey: function(keyId) {
-    var res = this.get('25519KeypreKey' + keyId);
-    if (res !== undefined) {
-      res = { pubKey: res.pubKey, privKey: res.privKey };
-    }
-    return Promise.resolve(res);
-  },
-  storePreKey: function(keyId, keyPair) {
-    return Promise.resolve(this.put('25519KeypreKey' + keyId, keyPair));
-  },
-  removePreKey: function(keyId) {
-    return Promise.resolve(this.remove('25519KeypreKey' + keyId));
-  },
-
-  /* Returns a signed keypair object or undefined */
-  loadSignedPreKey: function(keyId) {
-    var res = this.get('25519KeysignedKey' + keyId);
-    if (res !== undefined) {
-      res = { pubKey: res.pubKey, privKey: res.privKey };
-    }
-    return Promise.resolve(res);
-  },
-  storeSignedPreKey: function(keyId, keyPair) {
-    return Promise.resolve(this.put('25519KeysignedKey' + keyId, keyPair));
-  },
-  removeSignedPreKey: function(keyId) {
-    return Promise.resolve(this.remove('25519KeysignedKey' + keyId));
-  },
-
-  loadSession: function(identifier) {
-    return Promise.resolve(this.get('session' + identifier));
-  },
-  storeSession: function(identifier, record) {
-    return Promise.resolve(this.put('session' + identifier, record));
-  },
-  removeSession: function(identifier) {
-    return Promise.resolve(this.remove('session' + identifier));
-  },
-  removeAllSessions: function(identifier) {
-    for (var id in this.store) {
-      if (id.startsWith('session' + identifier)) {
-        delete this.store[id];
-      }
-    }
-    return Promise.resolve();
-  }
-};
-
-
-
-
-var KeyHelper = libsignal.KeyHelper;
-
-var debug = console;
-
-
-
 export default {  
   name: 'Registration',
   data () {
 
     return {
       showLoadingArea:false,
-      msg: 'Welcome to Your Vue.js App'
+      username: '',
+      password: '',
+      passwordRepeat: '',
+      showErrors:[],
+      passwordError:'',
+      registrationSubmitted:false
     }
   },
   mounted:function(){
 
-
-
-
-
-
-libsignal.SignalProtocolStore = SignalProtocolStore;
-console.log(SignalProtocolStore);
-
-function generateIdentity(store) {
-    return Promise.all([
-        KeyHelper.generateIdentityKeyPair(),
-        KeyHelper.generateRegistrationId(),
-    ]).then(function(result) {
-      console.log(store);
-        store.put('identityKey', result[0]);
-        store.put('registrationId', result[1]);
-    });
-}
-
-function generatePreKeyBundle(store, preKeyId, signedPreKeyId) {
-    return Promise.all([
-        store.getIdentityKeyPair(),
-        store.getLocalRegistrationId()
-    ]).then(function(result) {
-        var identity = result[0];
-        var registrationId = result[1];
-
-        return Promise.all([
-            KeyHelper.generatePreKey(preKeyId),
-            KeyHelper.generateSignedPreKey(identity, signedPreKeyId),
-        ]).then(function(keys) {
-            var preKey = keys[0]
-            var signedPreKey = keys[1];
-
-            store.storePreKey(preKeyId, preKey.keyPair);
-            store.storeSignedPreKey(signedPreKeyId, signedPreKey.keyPair);
-
-            return {
-                identityKey: identity.pubKey,
-                registrationId : registrationId,
-                preKey:  {
-                    keyId     : preKeyId,
-                    publicKey : preKey.keyPair.pubKey
-                },
-                signedPreKey: {
-                    keyId     : signedPreKeyId,
-                    publicKey : signedPreKey.keyPair.pubKey,
-                    signature : signedPreKey.signature
-                }
-            };
-        });
-    });
-}
-var ALICE_ADDRESS = new libsignal.SignalProtocolAddress("xxxxxxxxx", 1);
-var BOB_ADDRESS   = new libsignal.SignalProtocolAddress("yyyyyyyyyyyyy", 1);
-
-    var aliceStore = new libsignal.SignalProtocolStore();
-
-    var bobStore = new libsignal.SignalProtocolStore();
-    var bobPreKeyId = 1337;
-    var bobSignedKeyId = 1;
-
-    var Curve = libsignal.Curve;
-
-        Promise.all([
-            generateIdentity(aliceStore),
-            generateIdentity(bobStore),
-        ]).then(function() {
-            return generatePreKeyBundle(bobStore, bobPreKeyId, bobSignedKeyId);
-        }).then(function(preKeyBundle) {
-            console.log('got preKeyBundle');
-
-            var builder = new libsignal.SessionBuilder(aliceStore, BOB_ADDRESS);
-            return builder.processPreKey(preKeyBundle).then(function() {
-              console.log('makarenaa!');
-              console.log(aliceStore);
-              console.log('makarena!');
-
-              var enc = new TextEncoder(); // always utf-8
-              var msg = enc.encode("This is a string converted to a Uint8Array");
-              console.log(msg);
-
-              var originalMessage = msg;
-              var aliceSessionCipher = new libsignal.SessionCipher(aliceStore, BOB_ADDRESS);
-              var bobSessionCipher = new libsignal.SessionCipher(bobStore, ALICE_ADDRESS);
-
-              aliceSessionCipher.encrypt(originalMessage).then(function(ciphertext) {
-
-                console.log('ciphertext');
-                console.log(ciphertext);
-
-                  // check for ciphertext.type to be 3 which includes the PREKEY_BUNDLE
-                  return bobSessionCipher.decryptPreKeyWhisperMessage(ciphertext.body, 'binary');
-
-              }).then(function(plaintext) {
-
-
-                var enc = new TextDecoder("utf-8");
-                plaintext = enc.decode(plaintext);
-
-                  console.log('pt');
-                  console.log(plaintext);
-                  alert(plaintext);
-
-              });
-
-              
-              bobSessionCipher.encrypt(originalMessage).then(function(ciphertext) {
-
-                  return aliceSessionCipher.decryptWhisperMessage(ciphertext.body, 'binary');
-
-              }).then(function(plaintext) {
-
-                  assertEqualArrayBuffers(plaintext, originalMessage);
-
-              });
-              
-
-            });
-        });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     //cry.generateUserKeys();
   },
   methods: {
-    register_user(){
-      console.log('start registration');
+    checkPasswordStrength(password){
+
+                // Do not show anything when the length of password is zero.
+                if (password.length === 0) 
+                    return 0;
+                // Create an array and push all possible values that you want in password
+                var matchedCase = new Array();
+                matchedCase.push("[$@$!%*#?&]"); // Special Charector
+                matchedCase.push("[A-Z]");      // Uppercase Alpabates
+                matchedCase.push("[0-9]");      // Numbers
+                matchedCase.push("[a-z]");     // Lowercase Alphabates
+
+                // Check the conditions
+                var ctr = 0;
+                for (var i = 0; i < matchedCase.length; i++) {
+                    if (new RegExp(matchedCase[i]).test(password)) {
+                        ctr++;
+                    }
+                }
+
+                //add password length
+                ctr = parseInt(ctr)+Math.round(password.length/15);
+
+                return ctr;
+    },
+    submitRegistration(){
+      this.registrationSubmitted = true;
+      this.checkRegistrationInput()
+      if(this.showErrors.length == 0)
+        alert('submit registration now!');
+    },
+    onRegistrationType(){
+      /*
+      is called if user types in a field within the registration that is checked within checkRegistration()
+      it is called on each key input after the first
+      submittion try of the registration form
+      */
+
+      if(this.registrationSubmitted)
+        this.checkRegistrationInput();
+    },
+    checkRegistrationInput(){
+      //check if username is empty
+      if(this.username.length < 3){
+        this.usernameError = 'The username is to short';
+        if(this.showErrors.indexOf('username') == -1)
+          this.showErrors.push('username');
+      }
+
+      else if (this.showErrors.indexOf('username') !== -1)
+        this.showErrors.splice(this.showErrors.indexOf('username'), 1);
+
+      //check if passwords match
+      if(this.password != this.passwordRepeat){
+        if(this.showErrors.indexOf('password_missmatch') == -1)
+          this.showErrors.push('password_missmatch');
+      }
+      else if (this.showErrors.indexOf('password_missmatch') !== -1) 
+        this.showErrors.splice(this.showErrors.indexOf('password_missmatch'), 1);
+
+      var password_strength = this.checkPasswordStrength(this.password);
+      if(!password_strength)
+        password_strength = 0;
+
+      if(password_strength <2){
+        if (this.showErrors.indexOf('password_strength') == -1) 
+          this.showErrors.push('password_strength');
+        
+        this.passwordError = 'Uh-Oh! Your Granma could crack that password!'
+      }
+      else if(password_strength < 4){
+        if (this.showErrors.indexOf('password_strength') == -1) 
+          this.showErrors.push('password_strength');
+
+        this.passwordError = 'Come on! Thats not a good password'
+      }else if(password_strength >= 4){
+        this.passwordError = '';
+        if (this.showErrors.indexOf('password_strength') !== -1) this.showErrors.splice(this.showErrors.indexOf('password_strength'), 1);
+      }
+
+      console.log(this.showErrors);
+
     }
   },
   components: {
@@ -337,17 +188,18 @@ var BOB_ADDRESS   = new libsignal.SignalProtocolAddress("yyyyyyyyyyyyy", 1);
 }
 
 .regError {
-  display: none;
-    position: absolute;
-    background-color: #790125;
-    margin-top: -35px;
-    height: 30px;
-    line-height: 30px;
-    color: #FFF !important;
-    padding-right: 5px;
-    text-align: left;
-    width: 320px;
-    margin-left: 325px;
+  position: absolute;
+  background-color: #790125;
+  margin-top: -35px;
+  height: 30px;
+  line-height: 30px;
+  color: #FFF !important;
+  padding-right: 5px;
+  text-align: left;
+  width: 320px;
+  margin-left: 325px;
+  display: inline;
+  background: rgb(121, 1, 37);
 }
 .regError > * {
   color: #FFF;
