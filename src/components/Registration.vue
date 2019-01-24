@@ -55,6 +55,8 @@
 
 <script>
 import UniverseButton from '@/components/UniverseButton'
+import cry from '../utils/crypto'
+cry.test();
 
 export default {  
   name: 'Registration',
@@ -105,8 +107,11 @@ export default {
     submitRegistration(){
       this.registrationSubmitted = true;
       this.checkRegistrationInput()
-      if(this.showErrors.length == 0)
+      if(this.showErrors.length == 0){
+        var userKeys = cry.generateAsymKeys();
+        console.log(userKeys);
         alert('submit registration now!');
+      }
     },
     onRegistrationType(){
       /*
