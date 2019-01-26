@@ -1,6 +1,7 @@
 import request from 'request';
 
 var api = function(){
+    this.baseURL = 'http://localhost:1312';
     this.init = function(){
         console.log('eyo');
 
@@ -10,6 +11,31 @@ var api = function(){
           console.log('body:', body); // Print the HTML for the Google homepage.
         });
     }
+
+
+
+    this.request = function(action,parameters,cb){
+      const url = this.baseURL+'/'+action;
+      var options = {
+        method: 'post',
+        body: parameters,
+        json: true,
+        url: url
+      }
+      request(options, function (err, res, body) {
+        if (err) {
+          console.error('error posting json: ', err)
+          cb(err)
+        }
+        var headers = res.headers
+        var statusCode = res.statusCode
+        console.log('headers: ', headers)
+        console.log('statusCode: ', statusCode)
+        console.log('body: ', body)
+        cb(null,res,body);
+      });
+    };
+    this.post = this.request;
 }
 
 export default new api();
