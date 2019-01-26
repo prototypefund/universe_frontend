@@ -24,14 +24,13 @@ var api = function(){
       }
       request(options, function (err, res, body) {
         if (err) {
-          console.error('error posting json: ', err)
+          console.error('error: ', err)
           cb(err)
         }
-        var headers = res.headers
-        var statusCode = res.statusCode
-        console.log('headers: ', headers)
-        console.log('statusCode: ', statusCode)
-        console.log('body: ', body)
+        //var headers = res.headers 
+        if(res.statusCode == 400)
+          cb(body);
+        else
         cb(null,res,body);
       });
     };
