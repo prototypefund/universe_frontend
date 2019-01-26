@@ -21,8 +21,7 @@ export default {
     }
   },
   mounted: function(){
-    console.log(api);
-    api.init();
+    
   }
 }
 </script>

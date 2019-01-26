@@ -2,22 +2,10 @@ import request from 'request';
 
 var api = function(){
     this.baseURL = 'http://localhost:1312';
-    this.init = function(){
-        console.log('eyo');
-
-        request('https://ifconfig.co', function (error, response, body) {
-          console.log('error:', error); // Print the error if one occurred
-          console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-          console.log('body:', body); // Print the HTML for the Google homepage.
-        });
-    }
-
-
-
-    this.request = function(action,parameters,cb){
+    this.request = function(method,action,parameters,cb){
       const url = this.baseURL+'/'+action;
       var options = {
-        method: 'post',
+        method: method,
         body: parameters,
         json: true,
         url: url
@@ -34,7 +22,12 @@ var api = function(){
         cb(null,res,body);
       });
     };
-    this.post = this.request;
+    this.get = function(method,parameters,cb){
+      this.request('get',action,parameters,cb);
+    }
+    this.post = function(method,parameters,cb){
+      this.request('post',action,parameters,cb);
+    }
 }
 
 export default new api();
