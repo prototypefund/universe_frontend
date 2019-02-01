@@ -22,10 +22,10 @@ var api = function(){
         cb(null,res,body);
       });
     };
-    this.get = function(method,parameters,cb){
+    this.get = function(action,parameters,cb){
       this.request('get',action,parameters,cb);
     }
-    this.post = function(method,parameters,cb){
+    this.post = function(action,parameters,cb){
       this.request('post',action,parameters,cb);
     }
 }
