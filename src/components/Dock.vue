@@ -15,7 +15,7 @@
     </div>
     <div id="dock">
       <universeButton text="Login" :click="toggleLogin" v-if="!auth"></universeButton>
-      <universeButton text="Apps" :click="login"></universeButton>
+      <universeButton text="Apps"></universeButton>
     </div>
   </div>
 </template>
