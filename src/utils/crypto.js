@@ -8,14 +8,10 @@ import {
 
 
 var cry = function(){
-
+    this.encodeBase64 = encodeBase64;
     this.symEncrypt = function(json, key){
       let keyHash = this.hash(key,'');
-      console.log('keyHash');
-      console.log(keyHash = keyHash.slice(0, 32));
-      console.log(keyHash.length);
-
-
+      keyHash = keyHash.slice(0, 32);
 
       //const keyUint8Array = decodeUTF8(keyHash);
       const nonce = nacl.randomBytes(nacl.secretbox.nonceLength);
@@ -29,16 +25,35 @@ var cry = function(){
       const base64FullMessage = encodeBase64(fullMessage);
       return base64FullMessage;
     };
+    this.symDecrypt = function(encrypted, key){
+      let keyHash = this.hash(key,'');
+      keyHash = keyHash.slice(0, 32);
+      console.log(keyHash);
 
+      const messageWithNonceAsUint8Array = decodeBase64(encrypted);
+      console.log(messageWithNonceAsUint8Array);
+      const nonce = messageWithNonceAsUint8Array.slice(0, nacl.secretbox.nonceLength);
+      const message = messageWithNonceAsUint8Array.slice(
+        nacl.secretbox.nonceLength,
+        encrypted.length
+      );
+
+      const decrypted = nacl.secretbox.open(message, nonce, keyHash);
+
+      if (!decrypted) {
+        throw new Error("Could not decrypt message");
+      }
+
+      const base64DecryptedMessage = encodeUTF8(decrypted);
+      return JSON.parse(base64DecryptedMessage);
+    };
     //password is used to encrypt secretKey
     this.generateUserKeys = function(password){
 
         const keyPair = nacl.box.keyPair();
         //@sec for debugging purpose
-
         //generate random salt for hashing the password
         const randomSalt = 'asdagskdhasdad';
-
         //hash password
         const passwordHash = this.hash(password,randomSalt);
 
@@ -46,7 +61,6 @@ var cry = function(){
         
         const encryptedSalt = this.symEncrypt(randomSalt,password);
         
-
         return {
           publicKey:encodeBase64(keyPair.publicKey),
           encryptedSecretKey:encryptedSecretKey,
