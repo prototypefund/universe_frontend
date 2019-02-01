@@ -59,8 +59,6 @@ import UniverseButton from '@/components/UniverseButton'
 import cry from '../utils/crypto'
 import api from '../utils/api'
 
-console.log(cry.generateUserKeys('password1'));
-console.log(cry.generateUserKeys('password2'));
 export default {  
   name: 'Registration',
   data () {
@@ -120,10 +118,13 @@ export default {
           username:this.username,
           userKeys:userKeys 
         },function(err,result){
-          if(err)
-            console.log(err)
-          else
+          if(err){
+            alert(err)
+          }
+          else{
+            alert('success');
             console.log(result);
+          }
           
         });
         alert('submit registration now!');
@@ -211,13 +212,12 @@ export default {
 
 .guestBox{
   background-color: #37474f;
-  box-shadow: 1px 3px 8px 0px rgba(0, 0, 0, 0.3);
-  width: 365px;
+  width: 335px;
   float: left;
   color: #FFF;
   margin-bottom: 10px;
   overflow: auto;
-  padding: 20px 20px;
+  padding: 25px;
 }
 
 .checkboxContainer{
@@ -235,7 +235,7 @@ export default {
   height: 40px;
   margin: 15px 0;
   border: none;
-  padding: 0 15px;
+  padding: 7px;
 }
 
 .guestBox input {
