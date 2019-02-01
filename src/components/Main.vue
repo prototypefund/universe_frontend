@@ -1,7 +1,5 @@
 <template>
   <div id="main">
-    <h2>universe</h2>
-    <h3>Welcome to the universe - the first social webOS</h3>
     <registration v-if="!auth"></registration>
     <FileSystem></FileSystem>
     <Dock></Dock>
@@ -9,7 +7,6 @@
 </template>
 
 <script>
-
 import { authBus } from '../main';
 import Dock from '@/components/Dock'
 import Application from '@/components/Application'

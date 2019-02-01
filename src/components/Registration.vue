@@ -1,5 +1,7 @@
 <template>
           <div class="guestArea">
+            <h2>universe</h2>
+            <h3>Welcome to the universe - the first social webOS</h3>
             <div class="guestBox registerBox">
                 <h2>Sign Up</h2>
                 <div class="pull-left">
