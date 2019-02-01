@@ -2,7 +2,9 @@
   <div>
     <div class="applicationWindow">
       <header>{{ title }}</header>
-      <div class="content">asdasdasd</div>
+      <div class="content">
+        <component :is="component"></component>
+      </div>
     </div>
   </div>
 </template>
@@ -13,7 +15,7 @@ import 'jquery-ui-bundle';
 import 'jquery-ui-bundle/jquery-ui.css'
 export default {
   name: 'Application',
-  props: ['title'],
+  props: ['title', 'component'],
   methods: {
     initApplication () {
       $(".applicationWindow").not('.ui-draggable').draggable({

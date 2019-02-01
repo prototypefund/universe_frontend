@@ -14,8 +14,9 @@
 
                       <input type="password" id="password" placeholder="Your Password" v-model="password" v-on:type="onRegistrationType">
 
-                      <span v-if="this.showErrors.indexOf('password_strength') > -1" class="regError">
+                      <span v-if="this.showErrors.indexOf('password_strength') > -1&&!ignorePasswordCheck" class="regError">
                         <a>{{passwordError}}</a>
+                        <a class="closeError" @click="ignorePasswordCheck = true">×</a>
                         <div class="arrow-right"></div>
                       </span>
 
@@ -55,6 +56,8 @@
 
 <script>
 import UniverseButton from '@/components/UniverseButton'
+import cry from '../utils/crypto'
+import api from '../utils/api'
 
 export default {  
   name: 'Registration',
@@ -67,6 +70,7 @@ export default {
       passwordRepeat: '',
       showErrors:[],
       passwordError:'',
+      ignorePasswordCheck:false,
       terms:false,
       uploadPrivateKey:true,
       registrationSubmitted:false
@@ -105,8 +109,26 @@ export default {
     submitRegistration(){
       this.registrationSubmitted = true;
       this.checkRegistrationInput()
-      if(this.showErrors.length == 0)
+      if(this.showErrors.length == 0){
+        var userKeys = cry.generateUserKeys(this.password);
+        console.log(userKeys);
+
+
+        api.post('createUser',{
+          username:this.username,
+          userKeys:userKeys 
+        },function(err,result){
+          if(err){
+            alert(err)
+          }
+          else{
+            alert('success');
+            console.log(result);
+          }
+          
+        });
         alert('submit registration now!');
+      }
     },
     onRegistrationType(){
       /*
@@ -145,25 +167,32 @@ export default {
       else if (this.showErrors.indexOf('terms') !== -1) 
         this.showErrors.splice(this.showErrors.indexOf('terms'), 1);
 
-      var password_strength = this.checkPasswordStrength(this.password);
-      if(!password_strength)
-        password_strength = 0;
+      //check password strengh if user didn't disable it
+      if(!this.ignorePasswordCheck){
+        let password_strength = this.checkPasswordStrength(this.password);
+        if(!password_strength)
+          password_strength = 0;
 
-      if(password_strength <2){
-        if (this.showErrors.indexOf('password_strength') == -1) 
-          this.showErrors.push('password_strength');
-        
-        this.passwordError = 'Uh-Oh! Your Granma could crack that password!'
-      }
-      else if(password_strength < 4){
-        if (this.showErrors.indexOf('password_strength') == -1) 
-          this.showErrors.push('password_strength');
+        if(password_strength <2){
+          if (this.showErrors.indexOf('password_strength') == -1) 
+            this.showErrors.push('password_strength');
+          
+          this.passwordError = 'Uh-Oh! Your Granma could crack that password!'
+        }
+        else if(password_strength < 4){
+          if (this.showErrors.indexOf('password_strength') == -1) 
+            this.showErrors.push('password_strength');
 
-        this.passwordError = 'Come on! Thats not a good password'
-      }else if(password_strength >= 4){
-        this.passwordError = '';
-        if (this.showErrors.indexOf('password_strength') !== -1) this.showErrors.splice(this.showErrors.indexOf('password_strength'), 1);
+          this.passwordError = 'Come on! Thats not a good password'
+        }else if(password_strength >= 4){
+          this.passwordError = '';
+          if (this.showErrors.indexOf('password_strength') !== -1) this.showErrors.splice(this.showErrors.indexOf('password_strength'), 1);
+        }
+      }else{
+        if(this.showErrors.indexOf('password_strength') > -1)
+          this.showErrors.splice(this.showErrors.indexOf('password_strength'), 1);
       }
+      
 
       console.log(this.showErrors);
 
@@ -183,13 +212,12 @@ export default {
 
 .guestBox{
   background-color: #37474f;
-  box-shadow: 1px 3px 8px 0px rgba(0, 0, 0, 0.3);
-  width: 365px;
+  width: 335px;
   float: left;
   color: #FFF;
   margin-bottom: 10px;
   overflow: auto;
-  padding: 20px 20px;
+  padding: 25px;
 }
 
 .checkboxContainer{
@@ -207,7 +235,7 @@ export default {
   height: 40px;
   margin: 15px 0;
   border: none;
-  padding: 0 15px;
+  padding: 7px;
 }
 
 .guestBox input {
@@ -233,6 +261,13 @@ export default {
   color: #FFF;
 }
 
+.regError .closeError{
+    position: absolute;
+    cursor: pointer;
+    top: -16px;
+    right: -6px;
+}
+
 .arrow-right {
     position: absolute;
     left: 0;
@@ -248,8 +283,8 @@ export default {
 }
 
 .regError.terms{
-  margin-top: 3px;
-  margin-left:20px;
+  margin-top: 1.5px;
+  margin-left: 160px;
 }
 
 #registrationForm input[type="checkbox"]{

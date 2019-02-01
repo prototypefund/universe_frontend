@@ -1,29 +1,42 @@
 <template>
   <div id="main">
-    <h1>{{ msg }}</h1>
     <h2>universe</h2>
-    <registration></registration>
-    <application title="Testapplication"></application>
-    <application title="YuliyaApplication"></application>
-    <dock></dock>
+    <h3>Welcome to the universe - the first social webOS</h3>
+    <registration v-if="!auth"></registration>
+    <FileSystem></FileSystem>
+    <Dock></Dock>
   </div>
 </template>
 
 <script>
+
+import { authBus } from '../main';
 import Dock from '@/components/Dock'
 import Application from '@/components/Application'
 import Registration from '@/components/Registration'
+import FileSystem from '@/components/filesystem/Application'
 export default {
   name: 'Main',
   components: {
     Dock,
     Application,
-    Registration
+    Registration,
+    FileSystem
   },
   data () {
     return {
-      msg: 'Welcome to the universe'
+      dockcomponent: Dock,
+      auth:false
     }
+  },
+  created:function(){
+
+      authBus.$on('auth', (authObj) => {
+        if(typeof authObj.jwt != 'undefined'){
+          this.auth = true;
+          console.log('yala');
+        }
+      });
   }
 }
 </script>
