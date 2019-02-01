@@ -2,13 +2,15 @@
   <div id="main">
     <h2>universe</h2>
     <h3>Welcome to the universe - the first social webOS</h3>
-    <registration></registration>
+    <registration v-if="!auth"></registration>
     <FileSystem></FileSystem>
     <Dock></Dock>
   </div>
 </template>
 
 <script>
+
+import { authBus } from '../main';
 import Dock from '@/components/Dock'
 import Application from '@/components/Application'
 import Registration from '@/components/Registration'
@@ -23,8 +25,18 @@ export default {
   },
   data () {
     return {
-      dockcomponent: Dock
+      dockcomponent: Dock,
+      auth:false
     }
+  },
+  created:function(){
+
+      authBus.$on('auth', (authObj) => {
+        if(typeof authObj.jwt != 'undefined'){
+          this.auth = true;
+          console.log('yala');
+        }
+      });
   }
 }
 </script>
