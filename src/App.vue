@@ -41,4 +41,19 @@ h2{
   font-weight:200;
 }
 
+ul{
+  list-style: none;
+  margin:0;
+  padding:0;
+}
+
+.pull-right{
+  float:right;
+}
+.pull-left{
+  float:left;
+}
+.clear{
+  clear:both;
+}
 </style>
