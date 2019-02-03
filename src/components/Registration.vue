@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import UniverseButton from '@/components/UniverseButton'
+import UniverseButton from '@/components/gui/UniverseButton'
 import cry from '../utils/crypto'
 import api from '../utils/api'
 

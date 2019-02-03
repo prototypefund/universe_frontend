@@ -14,8 +14,17 @@
                 </form>
     </div>
     <div id="dock">
-      <universeButton text="Login" :click="toggleLogin" v-if="!auth"></universeButton>
-      <universeButton text="Apps"></universeButton>
+      <div v-if="!auth">
+        <universeButton text="Login" :click="toggleLogin" v-if="!auth"></universeButton>
+        <universeButton text="Apps"></universeButton>
+      </div>
+      <div v-if="auth">
+                      <i class="icon white-chevron-up"></i>
+                      <i class="icon white-eye"></i>
+                      <i class="icon white-user"></i>
+                      <i class="icon white-comment"></i>
+                      <i class="icon white-logout"></i>
+      </div>
     </div>
   </div>
 </template>
@@ -23,7 +32,7 @@
 <script>
 
 import $ from 'jquery';
-import UniverseButton from '@/components/UniverseButton'
+import UniverseButton from '@/components/gui/UniverseButton'
 import api from '../utils/api'
 import cry from '../utils/crypto'
 import { authBus } from '../main';
