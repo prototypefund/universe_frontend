@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 
 export const authBus = new Vue();
+export const modalBus = new Vue();
 
 Vue.config.productionTip = false
 
