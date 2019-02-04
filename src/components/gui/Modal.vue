@@ -6,7 +6,7 @@
         <span class="icon white-close close"></span>
       </header>
       <div class="content">
-        <component :is="component"></component>
+        <component :is="component" :data="data"></component>
       </div>
     </div>
   </div>
@@ -15,7 +15,7 @@
 <script>
 export default {
   name: 'Modal',
-  props: ['title', 'component'],
+  props: ['title', 'component', 'data'],
   methods: {
     
   },
@@ -53,4 +53,21 @@ export default {
   right: 10px;
   top: 10px;
 }
+
+
+/*universeForm start*/
+.universeForm .row{
+  position:relative;
+}
+.universeForm input[type=text]{
+  width: calc(100% - 15px);
+  height: 40px;
+  padding: 7px;
+  font-size: 16px;
+  color: #313131;
+  margin-bottom: 15px;
+  border: none;
+  background: #FFF;
+}
+/*universeForm end*/
 </style>

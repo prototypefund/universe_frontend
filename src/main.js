@@ -4,6 +4,7 @@ import router from './router'
 
 export const authBus = new Vue();
 export const modalBus = new Vue();
+export const applicationBus = new Vue();
 
 Vue.config.productionTip = false
 
