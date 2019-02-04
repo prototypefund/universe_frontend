@@ -1,7 +1,7 @@
 import request from 'request';
 
 var api = function(){
-    this.baseURL = 'http://localhost:1312';
+    this.baseURL = 'http://localhost:8000/api/v1';
     this.request = function(method,action,parameters,cb){
       const url = this.baseURL+'/'+action;
       var options = {
