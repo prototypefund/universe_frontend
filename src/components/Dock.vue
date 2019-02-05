@@ -24,7 +24,20 @@
                       <i class="icon white-user"></i>
                       <i class="icon white-comment"></i>
                       <i class="icon white-logout"></i>
+
+
+    
       </div>
+      <div class="pull-right" id="dockRight">
+            <a v-if="auth" title="search something" id="searchTrigger"><span class="icon white-search"></span></a>
+
+            <a v-if="auth" title="settings" id="settingsTrigger"><span class="icon white-gear"></span></a>
+
+            <div id="clock" v-html="dateTime">
+            </div>
+      </div>
+
+
     </div>
   </div>
 </template>
@@ -47,10 +60,16 @@ export default {
     return {
       auth:false,
       username: '',
-      password: ''
+      password: '',
+      dateTime:''
     }
   },
   methods: {
+    getDateTime: function () {
+      let options = { weekday: 'long', month: 'short', day: 'numeric' };
+      let today  = new Date();
+      return today.toLocaleDateString("en-US", options)+'&nbsp;&nbsp;&nbsp;'+(today.getHours()<10?'0':'')+today.getHours()+ ":" + (today.getMinutes()<10?'0':'')+today.getMinutes();
+    },
     login : function(){
       alert('Login!');
         const self = this;
@@ -89,6 +108,13 @@ export default {
     toggleLogin : function(){
       $('#loginBox').slideToggle();
     }
+  },
+  mounted:function(){
+    let self = this;
+    this.dateTime = this.getDateTime();
+    setInterval(function(){
+      self.dateTime = self.getDateTime();
+    },60000)
   }
 }
 </script>
@@ -104,16 +130,39 @@ export default {
   padding-bottom: 0px;
   background: #000;
 }
+
+#dock .universe-button{
+  height:17px;
+}
+
+#dockRight{
+  position: absolute;
+  width: 300px;
+  margin-top: -33px;
+  right: 0;
+}
+
+#dockRight>*{
+  float: right;
+  margin-right: 15px;
+}
+
+#dockRight #clock{
+  color:#FFF;
+  margin-right:15px;
+  margin-top: 6px;
+}
+
 #loginBox{
   position: absolute;
   bottom: 40px;
   left: 0px;
   background-color: #607d8b;
   box-shadow: 1px 3px 8px 0px rgba(0, 0, 0, 0.3);
-
   height: 190px;
   padding: 25px;
 }
+
 #loginBox input[type="text"], #loginBox input[type="password"] {
 
     width: 320px;
