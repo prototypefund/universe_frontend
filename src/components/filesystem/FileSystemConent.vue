@@ -20,31 +20,9 @@
     </ul>
    </div>
    <div class="contentMain">
-      <header>
-        {{path}}
-        <span class="icon icon-gear pull-right" v-if="auth" @click="showSettings=!showSettings"></span>
-      </header>
-      <ul class="settings" v-if="showSettings">
-        <li>
-          <span class="icon white-heart"></span>
-          Add to favorites
-        </li>
-        <li @click="createDirectory(directory_id)">
-          <span class="icon white-folder"></span>
-          Add folder
-        </li>
-        <li @click="createCollection(directory_id)">
-          <span class="icon white-filesystem"></span>
-          Add collection
-        </li>
-      </ul>
-      <ul>
-        <li v-for="directory in directories" @click="openDirectory(directory.id)">
-          <span class="icon icon-folder"></span>
-          {{directory.name}}
-        </li>
-      </ul>
-     
+
+      <Directory directory="1"></Directory>
+
    </div>
   </div>
 </template>
@@ -58,6 +36,7 @@ import api from '@/utils/api'
 
 import CreateDirectory from './CreateDirectory'
 import CreateCollection from './CreateCollection'
+import Directory from './Directory'
 
 export default {
   name: 'FileSystemContent',
@@ -69,22 +48,12 @@ export default {
       filesystemBus:{},
       directory_id:0,
       path:'universe/',
-      directories: []
+      directories: [],
+      collections: []
     }
   },
+  components:{Directory},
   methods:{
-    getDirectories:function(parent_id,cb){
-        api.get('directories/'+parent_id,{
-        },function(err,result,body){
-          if(err){
-            console.log(err);
-          }
-          else{
-            cb(body);
-          }
-          
-        });
-    },
     openDirectory:function(id){
       console.log('open directory #'+id);
       this.path = id;
@@ -94,37 +63,13 @@ export default {
       this.filesystemBus.directory_id = this.parent_directory_id;
       applicationBus.$emit('filesystem_1', this.filesystemBus);
       this.openDirectoryOnBusUpdate = true;
-      this.getDirectories(id,function(result){
+      this.getItems(id,function(result){
         self.directories = result.directories;
-      });
-    },
-    createDirectory:function(parent_directory_id){
-       modalBus.$emit('modal', {
-        title:'Create Directory',
-        component:CreateDirectory,
-        data:{parent_directory_id:parent_directory_id}
-      });
-    },
-    createCollection:function(directory_id){
-       modalBus.$emit('modal', {
-        title:'Create Collection',
-        component:CreateCollection,
-        data:{directory_id:directory_id}
+        self.collections = result.collections;
       });
     }
   },
   mounted: function(){
-    let self = this;
-    this.openDirectory(0);
-
-
-
-    applicationBus.$on('filesystem_1', (applicationObj) => {
-        self.filesystemBus = applicationObj;
-        if(self.openDirectoryOnBusUpdate)
-          self.openDirectory(applicationObj.directory_id);
-    });
-
     authBus.$on('auth', (authObj) => {
         if(typeof authObj.jwt != 'undefined'){
           this.auth = true;

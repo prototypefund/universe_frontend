@@ -50,17 +50,12 @@ export default {
             modalBus.$emit('modal', {
 
             });
-
-
-            
             applicationBus.$on('filesystem_1', (applicationObj) => {
               self.filesystemBus = applicationObj;
             });
             self.filesystemBus.directory_id = self.data.parent_directory_id;
             applicationBus.$emit('filesystem_1', self.filesystemBus);
-
           }
-          
       });
       console.log('submitted');
     }
