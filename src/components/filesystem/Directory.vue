@@ -4,7 +4,7 @@
         {{path}}
         <span class="icon icon-gear pull-right" v-if="auth" @click="showSettings=!showSettings"></span>
       </header>
-      <ul class="settings" v-if="showSettings">
+      <ul class="blue-settings" v-if="showSettings">
         <li>
           <span class="icon white-heart"></span>
           Add to favorites
@@ -60,6 +60,11 @@ export default {
     }
   },
   props:['directory'],
+  watch: {
+    directory: function (directory_id) {
+      this.openDirectory(directory_id);
+    }
+  },
   methods:{
     getItems:function(parent_id,cb){
         api.get('directories/'+parent_id,{
@@ -77,16 +82,27 @@ export default {
       console.log('open directory #'+id);
       this.path = id;
       this.directory_id = id;
-      let self = this;
+
+      //set to false so applicationBus.$emit doesn't trigget infinite loop
       this.openDirectoryOnBusUpdate = false;
-      this.filesystemBus.directory_id = this.parent_directory_id;
+
+      this.filesystemBus.collection_id = -1;
+      this.filesystemBus.directory_id = id;
       applicationBus.$emit('filesystem_1', this.filesystemBus);
       this.openDirectoryOnBusUpdate = true;
+
+      let self = this;
       this.getItems(id,function(result){
-        console.log('got items', result);
+        self.path = result.info.path;
         self.directories = result.directories;
         self.collections = result.collections;
       });
+    },
+    openCollection:function(id){
+      console.log('open collection '+id);
+      this.filesystemBus.directory_id = -1;
+      this.filesystemBus.collection_id = id;
+      applicationBus.$emit('filesystem_1', this.filesystemBus)
     },
     createDirectory:function(parent_directory_id){
        modalBus.$emit('modal', {
@@ -106,21 +122,26 @@ export default {
   mounted: function(){
     this.directory_id = this.directory;
     let self = this;
-    this.openDirectory(0);
+    this.openDirectory(1);
 
 
 
     applicationBus.$on('filesystem_1', (applicationObj) => {
         self.filesystemBus = applicationObj;
-        if(self.openDirectoryOnBusUpdate)
+
+        //bool openDirectoryOnBusUpdate is used to prevent infinte loop when openDirectory execute its set to false
+        if(self.openDirectoryOnBusUpdate&&applicationObj.directory_id>-1)
           self.openDirectory(applicationObj.directory_id);
     });
 
     authBus.$on('auth', (authObj) => {
         if(typeof authObj.jwt != 'undefined'){
-          this.auth = true;
+          self.auth = true;
         }
     });
+    if(localStorage.getItem('jwt')){
+      self.auth = true;
+    }
   }
 }
 </script>
@@ -164,14 +185,5 @@ export default {
   overflow: hidden;
   border-bottom: 1px solid #dcdcdc;
   padding: 10px;
-}
-
-.settings li{
-  cursor: pointer;
-  margin: 0 !important;
-  background-color: #37474f;
-  color: #ffffff !important;
-  padding: 3px;
-  border-bottom: 1px solid #263238;
 }
 </style>

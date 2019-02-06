@@ -15,65 +15,49 @@
         <span class="icon blue-playlist"></span> Audio Files
       </li>
       <li>
-        <span class="icon blue-play"></span> Video Files
+        <span class="icon blue-play"></span>{{directory_id}} Video{{collection_id}}Files
       </li>          
     </ul>
    </div>
    <div class="contentMain">
 
-      <Directory directory="1"></Directory>
+      <Directory v-if="directory_id>-1" :directory="directory_id"></Directory>
+      <Collection v-if="collection_id>-1" :collection="collection_id"></Collection>
 
    </div>
   </div>
 </template>
 
 <script>
+import { applicationBus } from '../../main';
 
-import { authBus, modalBus, applicationBus } from '../../main';
-
-
-import api from '@/utils/api'
-
-import CreateDirectory from './CreateDirectory'
-import CreateCollection from './CreateCollection'
 import Directory from './Directory'
+import Collection from './Collection'
 
 export default {
   name: 'FileSystemContent',
   data () {
     return {
-      auth:false,
-      showSettings:false,
-      openDirectoryOnBusUpdate:true, //needs to be set false during opendirectory to prevent endless loop
-      filesystemBus:{},
       directory_id:0,
-      path:'universe/',
-      directories: [],
-      collections: []
+      collection_id:-1
     }
   },
-  components:{Directory},
+  components:{
+    Directory,
+    Collection
+  },
   methods:{
     openDirectory:function(id){
       console.log('open directory #'+id);
-      this.path = id;
       this.directory_id = id;
-      let self = this;
-      this.openDirectoryOnBusUpdate = false;
-      this.filesystemBus.directory_id = this.parent_directory_id;
-      applicationBus.$emit('filesystem_1', this.filesystemBus);
-      this.openDirectoryOnBusUpdate = true;
-      this.getItems(id,function(result){
-        self.directories = result.directories;
-        self.collections = result.collections;
-      });
     }
   },
   mounted: function(){
-    authBus.$on('auth', (authObj) => {
-        if(typeof authObj.jwt != 'undefined'){
-          this.auth = true;
-        }
+    applicationBus.$on('filesystem_1', (applicationObj) => {
+        console.log('filesystem updated!');
+        console.log(applicationObj);
+        this.directory_id = applicationObj.directory_id;
+        this.collection_id = applicationObj.collection_id;
     });
   }
 }
