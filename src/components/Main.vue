@@ -40,6 +40,11 @@ export default {
   },
   created:function(){
 
+
+      if(localStorage.getItem('jwt')){
+        this.auth = true;
+      }
+
       //will be called e.g. during login/logout
       authBus.$on('auth', (authObj) => {
         if(typeof authObj.jwt != 'undefined'){
