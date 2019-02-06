@@ -23,7 +23,7 @@
                       <i class="icon white-eye"></i>
                       <i class="icon white-user"></i>
                       <i class="icon white-comment"></i>
-                      <i class="icon white-logout"></i>
+                      <i class="icon white-logout" :click="logout"></i>
 
 
     
@@ -98,6 +98,8 @@ export default {
                   user:body.user,
                   jwt:body.jwt
                 });
+                localStorage.setItem('jwt',body.jwt);
+                localStorage.setItem('user',body.user);
                 self.auth = true;
               }
             });
@@ -105,12 +107,20 @@ export default {
           
         });
     },
+    logout : function(){
+      localStorage.clear();
+    },
     toggleLogin : function(){
       $('#loginBox').slideToggle();
     }
   },
   mounted:function(){
     let self = this;
+
+    if(localStorage.getItem('jwt')){
+      self.auth = true;
+    }
+
     this.dateTime = this.getDateTime();
     setInterval(function(){
       self.dateTime = self.getDateTime();
@@ -164,13 +174,11 @@ export default {
 }
 
 #loginBox input[type="text"], #loginBox input[type="password"] {
-
     width: 320px;
     height: 40px;
     padding: 7px;
     font-size: 16px;
     margin-bottom: 15px;
     border: none;
-
 }
 </style>
