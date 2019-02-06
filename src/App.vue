@@ -50,10 +50,21 @@ ul{
 .pull-right{
   float:right;
 }
+
 .pull-left{
   float:left;
 }
+
 .clear{
   clear:both;
+}
+
+.blue-settings li{
+  cursor: pointer;
+  margin: 0 !important;
+  background-color: #37474f;
+  color: #ffffff !important;
+  padding: 3px;
+  border-bottom: 1px solid #263238;
 }
 </style>
