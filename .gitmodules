@@ -1,3 +1,0 @@
-[submodule "public/js/signal-protocol"]
-	path = public/js/signal-protocol
-	url = https://github.com/elsehow/signal-protocol.git
