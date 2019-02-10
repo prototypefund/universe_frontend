@@ -11,7 +11,7 @@
         </span>
       </header>
       <ul class="blue-settings" v-if="showSettings">
-        <li>
+        <li @click="uploadFile()">
           <span class="icon white-file"></span>
           Upload files
         </li>
@@ -32,8 +32,7 @@ import { authBus, modalBus, applicationBus } from '../../main';
 
 import api from '@/utils/api'
 
-import CreateDirectory from './CreateDirectory'
-import CreateCollection from './CreateCollection'
+import UploadFile from './UploadFile'
 
 export default {
   name: 'Collection',
@@ -44,9 +43,6 @@ export default {
       openDirectoryOnBusUpdate:true, //needs to be set false during opendirectory to prevent endless loop
       filesystemBus:{},
       collection_id:0,
-      path:'universe/',
-      directories: [],
-      collections: []
     }
   },
   props:['directory'],
@@ -74,6 +70,13 @@ export default {
       this.filesystemBus.collection_id = id;
       applicationBus.$emit('filesystem_1', this.filesystemBus)
     },
+    uploadFile:function(){
+      modalBus.$emit('modal', {
+        title:'Upload File',
+        component:UploadFile,
+        data:{collection_id:this.collection_id}
+      });
+    }
   },
   mounted: function(){
     this.collection_id = this.collection;
