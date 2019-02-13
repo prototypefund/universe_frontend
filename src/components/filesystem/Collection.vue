@@ -2,7 +2,7 @@
   <div>
       <header>
         <span class="icon icon-filesystem"></span>
-        <span class="elementtitle">Metamorphosis</span>
+        <span class="elementtitle">{{name}}</span>
         <span class="headerbuttons">
           <span class="icon blue-list"></span>
           <span class="icon icon-small-symbols"></span>
@@ -15,10 +15,28 @@
           <span class="icon white-file"></span>
           Upload files
         </li>
+        <li @click="addLink()">
+          <span class="icon white-file"></span>
+          Add Link
+        </li>
       </ul>
       <ul>
         <li class="header">Files</li>
         <li>No files uploaded. Click on the settings button above to upload them.</li>
+        <li v-for="file in files">
+          <span class="icons">
+            <span class="icon icon-file"></span>
+          </span>
+          <span class="title">
+            {{file.name}}
+          </span>
+          <span class="buttons">
+            <span class="icon icon-gear"></span>
+          </span>
+          <span class="size" style="display: none;">138 kB</span>
+          <span class="date" style="display: none;">1970 Jan 01</span>
+        </li>
+
         <li class="header">Images</li>
         <li>No images uploaded. Click on the settings button above to upload them.</li>
         <li class="header">Links</li>
@@ -40,20 +58,23 @@ export default {
     return {
       auth:false,
       showSettings:false,
-      openDirectoryOnBusUpdate:true, //needs to be set false during opendirectory to prevent endless loop
+      openCollectionOnBusUpdate:true, //needs to be set false during opendirectory to prevent endless loop
       filesystemBus:{},
       collection_id:0,
+      name:'',
+      files:[]
     }
   },
-  props:['directory'],
+  props:['collection'],
   watch: {
     collection: function (collection_id) {
+        console.log('UPDATE!'+collection_id);
       this.openCollection(collection_id);
     }
   },
   methods:{
     getItems:function(parent_id,cb){
-        api.get('directories/'+parent_id,{
+        api.get('collections/'+parent_id,{
         },function(err,result,body){
           if(err){
             console.log(err);
@@ -66,9 +87,16 @@ export default {
     },
     openCollection:function(id){
       console.log('open collection');
+      this.openCollectionOnBusUpdate = false;
       this.filesystemBus.directory_id = -1;
       this.filesystemBus.collection_id = id;
       applicationBus.$emit('filesystem_1', this.filesystemBus)
+
+      let self = this;
+      this.getItems(id,function(result){
+        self.name = result.info.name;
+        self.files = result.files;
+      });
     },
     uploadFile:function(){
       modalBus.$emit('modal', {
@@ -76,15 +104,26 @@ export default {
         component:UploadFile,
         data:{collection_id:this.collection_id}
       });
+    },
+    addLink:function(){
+      modalBus.$emit('modal', {
+        title:'Add Link',
+        component:UploadFile,
+        data:{collection_id:this.collection_id}
+      });
     }
   },
   mounted: function(){
     this.collection_id = this.collection;
+    this.openCollection(this.collection);
+    
     let self = this;
-
     applicationBus.$on('filesystem_1', (applicationObj) => {
         self.filesystemBus = applicationObj;
-        //bool openDirectoryOnBusUpdate is used to prevent infinte loop when openDirectory execute its set to false
+        
+        console.log('UPDATE!');
+        if(self.openCollectionOnBusUpdate && applicationObj.collection_id>-1)
+          self.openCollection(applicationObj.collection_id);
     });
     authBus.$on('auth', (authObj) => {
         if(typeof authObj.jwt != 'undefined'){

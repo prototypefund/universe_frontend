@@ -13,10 +13,6 @@
         <input type="text" placeholder="info" v-model="info">
       </div>
       <div class="row">
-        <label>Privacy</label>
-        <input type="text" placeholder="Privacy" v-model="privacy">
-      </div>
-      <div class="row">
         <UniverseButton text="Create Directory" :click="submit" style="float: right;"></UniverseButton>
       </div>
     </form>
@@ -39,6 +35,7 @@ export default {
     return {
       name:'',
       privacy:'',
+      info:'',
       filesystemBus:{}
     }
   },

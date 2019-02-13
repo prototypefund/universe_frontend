@@ -14,7 +14,8 @@
     "tweetnacl": "^1.0.0",
     "tweetnacl-util": "^0.15.0",
     "vue": "^2.5.17",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vue2-dropzone": "^3.5.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.0",
