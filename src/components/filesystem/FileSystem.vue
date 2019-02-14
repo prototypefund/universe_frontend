@@ -15,7 +15,7 @@
         <span class="icon blue-playlist"></span> Audio Files
       </li>
       <li>
-        <span class="icon blue-play"></span>{{directory_id}} Video{{collection_id}}Files
+        <span class="icon blue-play"></span>Video Files
       </li>          
     </ul>
    </div>
@@ -65,38 +65,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.leftNav{
-  background: #cfd8dc;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 175px;
-}
 
-.leftNav ul li{
-  margin: 0px;
-  padding: 10px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.leftNav ul li:hover{
-  background:#FFF;
-  cursor:pointer;
-}
-
-.leftNav .icon{
-  margin-bottom:-11px;
-}
-
-.contentMain{
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left:175px;
-}
 
 .contentMain header{
   overflow: hidden;
