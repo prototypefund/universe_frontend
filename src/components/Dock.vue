@@ -23,7 +23,7 @@
                       <i class="icon white-eye"></i>
                       <i class="icon white-user"></i>
                       <i class="icon white-comment"></i>
-                      <i class="icon white-logout" :click="logout"></i>
+                      <i class="icon white-logout" @click="logout"></i>
 
 
     
@@ -108,7 +108,9 @@ export default {
         });
     },
     logout : function(){
+      alert('logout');
       localStorage.clear();
+      window.location = window.location;
     },
     toggleLogin : function(){
       $('#loginBox').slideToggle();
