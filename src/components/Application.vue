@@ -1,10 +1,13 @@
 <template>
   <div>
-    <div class="applicationWindow">
+    <div class="applicationWindow" :style="styleObject">
       <header>{{ title }}</header>
       <div class="content">
         <component :is="component"></component>
       </div>
+      <footer>
+         {{styleObject}}
+      </footer>
     </div>
   </div>
 </template>
@@ -15,9 +18,51 @@ import 'jquery-ui-bundle';
 import 'jquery-ui-bundle/jquery-ui.css'
 export default {
   name: 'Application',
-  props: ['title', 'component'],
+  props: ['title', 'component','styles'],
+  data () {
+    return {
+      styleObject: {
+      },
+      left:0,
+      style:this.styles
+    }
+  },
+  watch: {
+    style: {
+      handler: function(val, oldVal) {
+        console.log(oldVal, val);
+
+        console.log('style update');
+        this.initStyles(val);
+      },
+      deep: true
+    }
+  },
   methods: {
+    initStyles (styles) {
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+      if(this.styles){
+        if(this.styles.width)
+          this.styleObject.width = this.styles.width*(windowWidth/12)+'px';
+        if(this.styles.left)
+          this.styleObject.left = this.styles.left*(windowWidth/12)+'px';
+        if(this.styles.right)
+          this.styleObject.right = this.styles.right*(windowWidth/12)+'px';
+        if(this.styles.top)
+          this.styleObject.top = this.styles.top*(windowHeight/4)+'px';
+        if(this.styles.height)
+          this.styleObject.height = this.styles.height*(windowHeight/4)+'px';
+        if(this.styles.hidden)
+          this.styleObject.display = 'none';
+        else
+          this.styleObject.display = '';
+      }
+      this.$forceUpdate();
+    },
     initApplication () {
+
+      
       $(".applicationWindow").not('.ui-draggable').draggable({
               cancel: '.inhalt',
               containment: '#app',
@@ -68,8 +113,8 @@ export default {
     }
   },
   mounted: function () {
-      console.log('ready');
       this.initApplication();
+      this.initStyles(this.styles);
   },
 
 }

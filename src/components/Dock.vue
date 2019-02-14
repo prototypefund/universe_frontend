@@ -29,9 +29,9 @@
     
       </div>
       <div class="pull-right" id="dockRight">
-            <a v-if="auth" title="search something" id="searchTrigger"><span class="icon white-search"></span></a>
+            <a v-if="auth" title="search something" id="searchTrigger" @click="showSearch"><span class="icon white-search"></span></a>
 
-            <a v-if="auth" title="settings" id="settingsTrigger"><span class="icon white-gear"></span></a>
+            <a v-if="auth" title="settings" id="settingsTrigger" @click="showSettings"><span class="icon white-gear"></span></a>
 
             <div id="clock" v-html="dateTime">
             </div>
@@ -39,29 +39,34 @@
 
 
     </div>
+    <search :showsearch="showsearch"></search>
   </div>
 </template>
 
 <script>
 
 import $ from 'jquery';
+import Search from '@/components/Search'
 import UniverseButton from '@/components/gui/UniverseButton'
 import api from '../utils/api'
 import cry from '../utils/crypto'
-import { authBus } from '../main';
+import { authBus, applicationBus } from '../main';
 
 
 export default {
   name: 'Dock',
   components: {
-    UniverseButton
+    UniverseButton,
+    Search
   },
   data () {
     return {
       auth:false,
       username: '',
       password: '',
-      dateTime:''
+      dateTime:'',
+      applications:{},
+      showsearch:false
     }
   },
   methods: {
@@ -113,6 +118,14 @@ export default {
     },
     toggleLogin : function(){
       $('#loginBox').slideToggle();
+    },
+    showSettings : function(){
+      let self = this;
+      this.applications.settings.style.hidden = false;
+      applicationBus.$emit('applications', this.applications)
+    },
+    showSearch: function(){
+      this.showsearch = true;
     }
   },
   mounted:function(){
@@ -121,6 +134,13 @@ export default {
     if(localStorage.getItem('jwt')){
       self.auth = true;
     }
+    console.log(applicationBus);
+    console.log(applicationBus.$data.valueOf('applications'));
+applicationBus.$nextTick();
+    //will be called e.g. during login/logout
+    applicationBus.$on('applications', (applications) => {
+        self.applications = applications
+    });
 
     this.dateTime = this.getDateTime();
     setInterval(function(){

@@ -8,7 +8,7 @@
 
     <ul>
       <li v-for="app in applications">
-        <application :title="app.title" :component="app.component"></application>
+        <application :title="app.title" :component="app.component" :styles="app.style"></application>
       </li>
     </ul>
 
@@ -17,16 +17,14 @@
 </template>
 
 <script>
-import Vue from 'vue'
-
-import { authBus } from '../main';
-import { modalBus } from '../main';
+import { authBus,modalBus,applicationBus } from '../main';
 import Dock from '@/components/Dock'
 import Registration from '@/components/Registration'
 
 
 import Application from '@/components/Application'
 import FileSystem from '@/components/filesystem/FileSystem'
+import Settings from '@/components/Settings'
 
 import Modal from '@/components/gui/Modal'
 
@@ -50,14 +48,33 @@ export default {
   },
   methods: {
     initApplications: function () {
-      this.applications.push({
-        title:'Files',
-        component:FileSystem
-      })
+      this.applications = {
+        files:
+              {
+                title:'Files',
+                component:FileSystem
+              },
+        settings:
+              {
+                title:'Settings',
+                component:Settings,
+                style:{
+                  hidden:true,
+                  width:6,
+                  height:2,
+                  left:2,
+                  top:1
+                }
+              }
+      }
+      let self = this;
+      setTimeout(()=>{
+        applicationBus.$emit('applications', this.applications);
+
+      },1000)
     }
   },
   created:function(){
-      this.initApplications();
 
       if(localStorage.getItem('jwt')){
         this.auth = true;
@@ -74,10 +91,22 @@ export default {
       modalBus.$on('modal', (modalObj) => {
         this.modal = modalObj;
       });
-
       //initialize modalobj
       modalBus.$emit('modal', {
       });
+
+      let self = this;
+      //will be called e.g. during login/logout
+      applicationBus.$on('applications', (applications) => {
+        console.log(applications.settings);
+        console.log('asd');
+        self.applications = applications;
+        console.log(self.applications);
+        self.$forceUpdate();
+      });
+
+      this.initApplications();
+
   }
 }
 </script>

@@ -37,6 +37,11 @@ export default {
   height: 100%;
   background: url(./assets/gfx/bg.jpg) no-repeat 100%;
 }
+
+h1, h2 {
+    font-size: 24px;
+}
+
 h2{
   font-weight:200;
 }
@@ -45,6 +50,11 @@ ul{
   list-style: none;
   margin:0;
   padding:0;
+}
+
+a{
+    color: #313131;
+    text-decoration: none;
 }
 
 .pull-right{
@@ -57,6 +67,21 @@ ul{
 
 .clear{
   clear:both;
+}
+
+input[type=text], input[type=password] {
+    width: 100%;
+    height: 40px;
+    padding: 7px;
+    font-size: 16px;
+    color: #313131;
+    margin-bottom: 15px;
+    border: none;
+    border: 1px solid #c9c9c9;
+}
+
+*{
+  box-sizing: border-box;
 }
 
 .blue-settings li{
@@ -91,6 +116,42 @@ ul{
 
 .leftNav .icon{
   margin-bottom:-11px;
+}
+
+.leftNav.dark li{
+    padding: 0;
+    color: #FFF;
+    padding-left: 5px;
+    padding-right: 5px;
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+    background: #37474f;
+    overflow: hidden;
+    font-size: 16px;
+}
+.leftNav.dark li .white{
+    display:none;
+}
+
+.leftNav.dark li:hover, .leftNav.dark li.active{
+    background-color:  #00bcd4;
+}
+
+.leftNav.dark li:hover .icon,.leftNav.dark li.active .icon{
+    display: none!important;
+}
+.leftNav.dark li:hover .white, .leftNav.dark li.active .white{
+    display: inline-block!important;
+}
+
+.leftNav.dark li:active, .leftNav.dark li:focus{
+    background-color:  #263238;
+}
+
+.leftNav.dark li .icon{
+    margin-right: 5px;
+    margin-bottom: -9px;
 }
 
 .contentMain{
