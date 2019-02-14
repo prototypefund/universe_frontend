@@ -5,7 +5,13 @@
       <Modal v-if="modal.component && modal.title.length > 0" :title="modal.title" :component="modal.component" :data="modal.data"></Modal>
     </div>
     <registration v-if="!auth"></registration>
-    <FileSystem></FileSystem>
+
+    <ul>
+      <li v-for="app in applications">
+        <application :title="app.title" :component="app.component"></application>
+      </li>
+    </ul>
+
     <Dock></Dock>
   </div>
 </template>
@@ -17,7 +23,10 @@ import { authBus } from '../main';
 import { modalBus } from '../main';
 import Dock from '@/components/Dock'
 import Registration from '@/components/Registration'
-import FileSystem from '@/components/filesystem/Application'
+
+
+import Application from '@/components/Application'
+import FileSystem from '@/components/filesystem/FileSystem'
 
 import Modal from '@/components/gui/Modal'
 
@@ -26,8 +35,8 @@ export default {
   components: {
     Dock,
     Registration,
-    FileSystem,
-    Modal
+    Modal,
+    Application
   },
   data () {
     return {
@@ -35,11 +44,20 @@ export default {
       auth:false,
       modal:{
 
-      }
+      },
+      applications:[]
+    }
+  },
+  methods: {
+    initApplications: function () {
+      this.applications.push({
+        title:'Files',
+        component:FileSystem
+      })
     }
   },
   created:function(){
-
+      this.initApplications();
 
       if(localStorage.getItem('jwt')){
         this.auth = true;

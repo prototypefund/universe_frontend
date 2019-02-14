@@ -108,7 +108,6 @@ export default {
         });
     },
     logout : function(){
-      alert('logout');
       localStorage.clear();
       window.location = window.location;
     },

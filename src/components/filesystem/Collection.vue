@@ -22,7 +22,7 @@
       </ul>
       <ul>
         <li class="header">Files</li>
-        <li>No files uploaded. Click on the settings button above to upload them.</li>
+        <li v-if="files.length > 0">No files uploaded. Click on the settings button above to upload them.</li>
         <li v-for="file in files">
           <span class="icons">
             <span class="icon icon-file"></span>
@@ -51,6 +51,8 @@ import { authBus, modalBus, applicationBus } from '../../main';
 import api from '@/utils/api'
 
 import UploadFile from './UploadFile'
+
+import CreateLink from './CreateLink'
 
 export default {
   name: 'Collection',
@@ -108,7 +110,7 @@ export default {
     addLink:function(){
       modalBus.$emit('modal', {
         title:'Add Link',
-        component:UploadFile,
+        component:CreateLink,
         data:{collection_id:this.collection_id}
       });
     }

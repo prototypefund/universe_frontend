@@ -35,7 +35,7 @@ import Directory from './Directory'
 import Collection from './Collection'
 
 export default {
-  name: 'FileSystemContent',
+  name: 'FileSystem',
   data () {
     return {
       directory_id:0,
