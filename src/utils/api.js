@@ -26,6 +26,9 @@ var api = function(){
       this.request('get',action,parameters,cb);
     }
     this.post = function(action,parameters,cb){
+      if(typeof localStorage.jwt != 'undefined')
+        parameters.token = localStorage.jwt;
+
       this.request('post',action,parameters,cb);
     }
 }
