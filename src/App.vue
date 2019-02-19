@@ -161,4 +161,13 @@ input[type=text], input[type=password] {
   bottom: 0;
   left:175px;
 }
+
+.userPicture {
+    background-position: center center;
+    background-size: cover!important;
+    background-repeat: no-repeat;
+    border: 2px solid;
+    float: left;
+    cursor: pointer;
+}
 </style>
