@@ -14,27 +14,53 @@
 	         <li data-value="universe" style="display: none;">the Universe</li>
 	         <li data-value="web" style="display: none;">the Web</li>
 	      </ul>
-	      <input type="text" placeholder="search" id="searchField">
+	      <input type="text" placeholder="search" id="searchField" v-model="query">
 	      <span class="icon blue-search"></span>
 	      <a href="#" id="openInTelescope" style="line-height: 40px;margin-left: 3px"><span class="icon white-search" style="margin-bottom: -8px;"></span>&nbsp;Open in Telescope</a>
 	   </header>
-	   <div id="loadingArea"></div>
+       <div id="loadingArea">
+          <div class="listContainer" v-if="results.users">
+             <header>Users</header>
+             <ul class="list resultList">
+                <container v-for="user, index in results.users">
+                    <li>
+                       <div class="userPicture userPicture_1 "></div>
+                       <a>{{user.name}}</a>
+                       <a @click="toggleSettings(index)">
+                        <span class="icon icon-gear dark"></span><span class="icon white-gear white"></span>
+                       </a>
+                    </li>
+                    <li class="searchContext" v-if="user.showSettings">
+                       <ul>
+                          <li @click="sendFriendRequest(user.id)"><span class="icon blue-plus"></span>Add User</li>
+                       </ul>
+                    </li>
+                </container>
+             </ul>
+             <div class="loadAll" data-type="users"><a href="#">show all</a></div>
+          </div>
+      </div>
 	</div>
 </template>
 <script>
 import UniverseButton from '@/components/gui/UniverseButton'
+import SettingsButton from '@/components/gui/SettingsButton'
 import api from '@/utils/api'
+import user from '@/utils/user'
 
 export default {
   name: 'Search',
   props:['showsearch'],
   components:{
-    UniverseButton
+    UniverseButton,
+    SettingsButton
   },
   data () {
     return {
       name:'',
-      show:this.showsearch
+      show:this.showsearch,
+      query:'',
+      results:{}
     }
   },
   watch: {
@@ -44,19 +70,46 @@ export default {
         this.show=val;
       },
       deep: true
+    },
+    query: {
+      handler: function(val, oldVal) {
+      	console.log(val);
+      	this.search();
+      },
+      deep: true
     }
   },
   methods:{
     search:function(){
-        api.get('search/'+keyword,{
+        var self = this;
+      	console.log('asd');
+        api.get('search/'+this.query,{
         },function(err,result,body){
           if(err){
-            alert(err);
+            console.log(err);
           }
           else{
-            
+            self.results = body;
 
           }
+          
+        });
+    },
+    toggleSettings:function(index){
+        console.log(index);
+        console.log(this.results.users[index]);
+        if(typeof this.results.users[index].showSettings == 'undefined')
+            this.results.users[index].showSettings = true;
+        else
+            this.results.users[index].showSettings = !this.results.users[index].showSettings;
+        this.$forceUpdate();
+    },
+    sendFriendRequest:function(userid){
+        user.sendFriendRequest(userid)
+        .then((result)=>{
+          
+        })
+        .catch((e)=>{
           
         });
     },
@@ -281,7 +334,6 @@ span.icon.blue-chevron-down {
 }
 
 .resultList .searchContext{
-    display:none;
     background-color:  #eceff1!important;
 }
 
