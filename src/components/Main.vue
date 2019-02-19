@@ -23,16 +23,17 @@
 </template>
 
 <script>
-import { authBus,alertBus,modalBus,applicationBus } from '../main';
+import { authBus,alertBus,modalBus,applicationBus, reloadBus } from '../main';
 import Dock from '@/components/Dock'
 import Registration from '@/components/Registration'
-
 import Application from '@/components/Application'
 import FileSystem from '@/components/filesystem/FileSystem'
 import Settings from '@/components/Settings'
 
 import Modal from '@/components/gui/Modal'
 import Alert from '@/components/gui/Alert'
+
+import api from '@/utils/api'
 
 export default {
   name: 'Main',
@@ -80,10 +81,25 @@ export default {
         applicationBus.$emit('applications', this.applications);
 
       },1000)
+    },
+    reload:function(){
+        api.get('user/reload',{
+        },function(err,result,body){
+          if(err){
+            console.log(err);
+          }
+          else{
+            for(let i in body){
+              reloadBus.$emit(i,body[i]);
+            }
+          }
+        });
     }
   },
   created:function(){
 
+      //init reload
+      setInterval(this.reload,10000)
       if(localStorage.getItem('jwt')){
         this.auth = true;
       }
