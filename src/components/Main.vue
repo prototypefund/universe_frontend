@@ -3,7 +3,13 @@
 
     <div id="loadingArea">
       <Modal v-if="modal.component && modal.title.length > 0" :title="modal.title" :component="modal.component" :data="modal.data"></Modal>
+      <ul>
+        <li v-for="alert in alerts">
+          <alert v-if="alert !=false" :text="alert.text"></alert>
+        </li>
+      </ul>
     </div>
+
     <registration v-if="!auth"></registration>
 
     <ul>
@@ -17,16 +23,16 @@
 </template>
 
 <script>
-import { authBus,modalBus,applicationBus } from '../main';
+import { authBus,alertBus,modalBus,applicationBus } from '../main';
 import Dock from '@/components/Dock'
 import Registration from '@/components/Registration'
-
 
 import Application from '@/components/Application'
 import FileSystem from '@/components/filesystem/FileSystem'
 import Settings from '@/components/Settings'
 
 import Modal from '@/components/gui/Modal'
+import Alert from '@/components/gui/Alert'
 
 export default {
   name: 'Main',
@@ -34,7 +40,8 @@ export default {
     Dock,
     Registration,
     Modal,
-    Application
+    Application,
+    Alert
   },
   data () {
     return {
@@ -43,7 +50,8 @@ export default {
       modal:{
 
       },
-      applications:[]
+      applications:[],
+      alerts:[]
     }
   },
   methods: {
@@ -87,6 +95,21 @@ export default {
         }
       });
 
+
+      let self = this;
+      //update alert object
+
+      alertBus.$on('alert', (alertObj) => {
+        self.alerts.push(alertObj);
+        let current_index = self.alerts.length-1;
+
+        //remove object from alerts array after 5s
+        setTimeout(()=>{
+          self.alerts[current_index] = false;
+          self.$forceUpdate();
+        },15000)
+      });
+
       //update modalobj
       modalBus.$on('modal', (modalObj) => {
         this.modal = modalObj;
@@ -94,8 +117,6 @@ export default {
       //initialize modalobj
       modalBus.$emit('modal', {
       });
-
-      let self = this;
       //will be called e.g. during login/logout
       applicationBus.$on('applications', (applications) => {
         console.log(applications.settings);

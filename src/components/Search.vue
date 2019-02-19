@@ -43,6 +43,9 @@
 	</div>
 </template>
 <script>
+
+import {alertBus} from '@/main';  
+
 import UniverseButton from '@/components/gui/UniverseButton'
 import SettingsButton from '@/components/gui/SettingsButton'
 import api from '@/utils/api'
@@ -96,8 +99,6 @@ export default {
         });
     },
     toggleSettings:function(index){
-        console.log(index);
-        console.log(this.results.users[index]);
         if(typeof this.results.users[index].showSettings == 'undefined')
             this.results.users[index].showSettings = true;
         else
@@ -107,10 +108,15 @@ export default {
     sendFriendRequest:function(userid){
         user.sendFriendRequest(userid)
         .then((result)=>{
-          
+          alertBus.$emit('alert', {
+            text:'Friendrequest sent'
+          });
         })
         .catch((e)=>{
-          
+          alertBus.$emit('alert', {
+            text:'Friendrequest sent'
+          });
+
         });
     },
     hide:function(){
@@ -142,7 +148,7 @@ export default {
     padding: 20px;
     background: #607d8b;
     color: #FFF;
-    z-index: 99999;
+    z-index: 999;
   	-webkit-transition: right .3s ease;
 }
 
