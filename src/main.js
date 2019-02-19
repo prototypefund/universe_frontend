@@ -19,6 +19,7 @@ export const authBus = new Vue();
 export const modalBus = new Vue();
 export const applicationBus = new Vue();
 export const alertBus = new Vue();
+export const reloadBus = new Vue();
 
 Vue.config.productionTip = false
 
