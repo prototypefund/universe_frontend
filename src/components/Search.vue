@@ -85,7 +85,6 @@ export default {
   methods:{
     search:function(){
         var self = this;
-      	console.log('asd');
         api.get('search/'+this.query,{
         },function(err,result,body){
           if(err){
@@ -95,7 +94,6 @@ export default {
             self.results = body;
 
           }
-          
         });
     },
     toggleSettings:function(index){
