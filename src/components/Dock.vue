@@ -1,5 +1,7 @@
 <template>
   <div>
+
+
     <div id="loginBox" v-if="!auth">
                 <form method="post" target="submitter" id="loginForm" onsubmit="login(); return false;">
                   <div>
@@ -13,6 +15,13 @@
                   </div>
                 </form>
     </div>
+
+    <ul>
+      <li v-for="notification in openRequests">
+        <notification :notification="notification" type="request"></notification>
+      </li>
+    </ul>
+
     <div id="dock">
       <div v-if="!auth">
         <universeButton text="Login" :click="toggleLogin" v-if="!auth"></universeButton>
@@ -48,16 +57,18 @@
 import $ from 'jquery';
 import Search from '@/components/Search'
 import UniverseButton from '@/components/gui/UniverseButton'
+import Notification from '@/components/gui/Notification'
 import api from '../utils/api'
 import cry from '../utils/crypto'
-import { authBus, applicationBus } from '../main';
+import { authBus, applicationBus, reloadBus } from '../main';
 
 
 export default {
   name: 'Dock',
   components: {
     UniverseButton,
-    Search
+    Search,
+    Notification
   },
   data () {
     return {
@@ -66,7 +77,8 @@ export default {
       password: '',
       dateTime:'',
       applications:{},
-      showsearch:false
+      showsearch:false,
+      openRequests:[]
     }
   },
   methods: {
@@ -114,7 +126,7 @@ export default {
     },
     logout : function(){
       localStorage.clear();
-      window.location = window.location;
+      window.location.reload();
     },
     toggleLogin : function(){
       $('#loginBox').slideToggle();
@@ -134,12 +146,15 @@ export default {
     if(localStorage.getItem('jwt')){
       self.auth = true;
     }
-    console.log(applicationBus);
-    console.log(applicationBus.$data.valueOf('applications'));
-applicationBus.$nextTick();
+    //console.log(applicationBus.$data.valueOf('applications'));
+    applicationBus.$nextTick();
     //will be called e.g. during login/logout
     applicationBus.$on('applications', (applications) => {
         self.applications = applications
+    });
+    reloadBus.$on('openRequests', (openRequests) => {
+        console.log('openRequests',openRequests);
+        this.openRequests = openRequests;
     });
 
     this.dateTime = this.getDateTime();
