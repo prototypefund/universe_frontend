@@ -88,14 +88,15 @@ export default {
       return today.toLocaleDateString("en-US", options)+'&nbsp;&nbsp;&nbsp;'+(today.getHours()<10?'0':'')+today.getHours()+ ":" + (today.getMinutes()<10?'0':'')+today.getMinutes();
     },
     login : function(){
-      alert('Login!');
         const self = this;
         const username = this.username;
         api.get('user/getUserSalt/'+username,{
         },function(err,result,body){
           if(err){
-            if(error.error == 'no_user_found')
+            if(err.error == 'no_user_found')
               alert('No matching user found');
+            else
+              alert('could not login!');
           }
           else{
             
@@ -117,6 +118,9 @@ export default {
                 });
                 localStorage.setItem('jwt',body.jwt);
                 localStorage.setItem('user',body.user);
+
+                localStorage.setItem('passwordHash',passwordHash);
+
                 self.auth = true;
               }
             });
