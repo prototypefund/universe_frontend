@@ -61,6 +61,10 @@ import UniverseButton from '@/components/gui/UniverseButton'
 import cry from '../utils/crypto'
 import api from '../utils/api'
 
+
+import $ from 'jquery';
+
+import {alertBus} from '@/main';  
 export default {  
   name: 'Registration',
   data () {
@@ -112,11 +116,10 @@ export default {
       this.registrationSubmitted = true;
       this.checkRegistrationInput()
       if(this.showErrors.length == 0){
-        var userKeys = cry.generateUserKeys(this.password);
-        console.log(userKeys);
+        let userKeys = cry.generateUserKeys(this.password);
 
-
-        api.post('createUser',{
+        let self = this;
+        api.post('user/createUser',{
           username:this.username,
           userKeys:userKeys 
         },function(err,result){
@@ -124,12 +127,14 @@ export default {
             alert(err)
           }
           else{
-            alert('success');
+            alertBus.$emit('alert', {
+              text:'Welcome '+self.username
+            });
+            $('#guestArea').slideUp();
             console.log(result);
           }
           
         });
-        alert('submit registration now!');
       }
     },
     onRegistrationType(){
