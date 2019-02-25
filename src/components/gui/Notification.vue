@@ -1,5 +1,5 @@
 <template>
-		<div class="notification">
+		<div class="notification" v-if="show">
             <div class="messageMain">
                 <userPicture :userid="1" size="20"></userPicture>
                 {{text}}
@@ -15,6 +15,7 @@
 
 import { alertBus } from '../../main';
 import user from '@/utils/user'
+import buddylist from '@/utils/buddylist'
 import UniverseButton from '@/components/gui/UniverseButton'
 import UserPicture from '@/components/gui/UserPicture'
 export default {
@@ -36,13 +37,21 @@ export default {
       denyButton:{
       	text:'deny',
       	callback:()=>{}
-      }
+      },
+      show:true
     }
   },
   methods: {
+  	hide:function(){
+  		console.log('hide');
+  		this.show = false
+  		console.log(this.show)
+  	}
     
   },
   mounted: function () {
+
+  	let self = this;
   	if(this.type == 'request'){
   		this.text = this.notification;
   		if(this.notification.type == 'buddy'){
@@ -51,16 +60,18 @@ export default {
   			this.acceptButton = {
 		      	text:'accept',
 		      	callback:()=>{
-		      		user.acceptFriendRequest(this.notification.user_b,this.notification.id)
-					.then((result)=>{
-					          alertBus.$emit('alert', {
-					            text:'Friendrequest accepted'
-					          });
+		      		buddylist.addBuddy(this.notification)
+					.then(()=>{
+					        alertBus.$emit('alert', {
+					        	text:'Friendrequest accepted'
+					        });
+					        self.hide();
 					})
 					.catch((e)=>{
-					          alertBus.$emit('alert', {
-					            text:'There was an error accepting the friend request'
-					          });
+					        alertBus.$emit('alert', {
+					        	text:'There was an error accepting the friend request'
+					        });
+					        self.hide();
 
 					});
 		      	}
