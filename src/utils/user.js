@@ -3,7 +3,6 @@ import api from './api';
 var user = function(){
     this.sendFriendRequest = function(userid){
       return new Promise((resolve, reject)=>{
-
         api.post('requests/',{
             type:'buddy',
             user_b:userid
@@ -17,16 +16,7 @@ var user = function(){
           });
       })
     }
-    this.acceptFriendRequest = function(){
-
-      //get old buddylist
-
-      //push user to it
-
-      //encrypt and store it
-
-      
-    }
+    //should be deleted same as request.delete
     this.deleteFriendRequest = function(request_id){
       return new Promise((resolve, reject)=>{
         api.post('requests/delete',{
