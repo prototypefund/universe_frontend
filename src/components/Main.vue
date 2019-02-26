@@ -28,7 +28,8 @@ import Dock from '@/components/Dock'
 import Registration from '@/components/Registration'
 import Application from '@/components/Application'
 import FileSystem from '@/components/filesystem/FileSystem'
-import Settings from '@/components/Settings'
+import Settings from '@/components/applications/Settings'
+import Buddylist from '@/components/applications/Buddylist'
 
 import Modal from '@/components/gui/Modal'
 import Alert from '@/components/gui/Alert'
@@ -74,6 +75,19 @@ export default {
                   left:2,
                   top:1
                 }
+              },
+        buddylist:
+              {
+                title:'Buddylist',
+                component:Buddylist,
+                style:{
+                  width:2,
+                  height:3,
+                  left:9,
+                  top:0.1
+                }
+
+
               }
       }
       let self = this;
