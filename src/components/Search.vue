@@ -1,28 +1,28 @@
 <template>
 	<div id="searchMenu" :class="{ 'slideLeft' : show == true}">
-  	   <header>
-  	      <a href="#" id="toggleSearchMenu" @click="hide"><span class="icon white-close"></span></a>
-  	      <h2>Search</h2>
-  	      <ul id="selectSource" class="">
-  	         <li class="trigger">Everything <span class="icon blue-chevron-down"></span></li>
-  	         <li data-value="text" style="display: none;">Text</li>
-  	         <li data-value="video" style="display: none;">Video</li>
-  	         <li data-value="audio" style="display: none;">Audio</li>
-  	      </ul>
-  	      <ul id="selectType" class="">
-  	         <li class="trigger">Everywhere <span class="icon blue-chevron-down"></span></li>
-  	         <li data-value="universe" style="display: none;">the Universe</li>
-  	         <li data-value="web" style="display: none;">the Web</li>
-  	      </ul>
-  	      <input type="text" placeholder="search" id="searchField" v-model="query">
-  	      <span class="icon blue-search"></span>
-  	      <a href="#" id="openInTelescope" style="line-height: 40px;margin-left: 3px"><span class="icon white-search" style="margin-bottom: -8px;"></span>&nbsp;Open in Telescope</a>
-  	   </header>
+  <header>
+  <a href="#" id="toggleSearchMenu" @click="hide"><span class="icon white-close"></span></a>
+  <h2>Search</h2>
+  <ul id="selectSource" class="">
+  <li class="trigger">Everything <span class="icon blue-chevron-down"></span></li>
+  <li data-value="text" style="display: none;">Text</li>
+  <li data-value="video" style="display: none;">Video</li>
+  <li data-value="audio" style="display: none;">Audio</li>
+  </ul>
+  <ul id="selectType" class="">
+  <li class="trigger">Everywhere <span class="icon blue-chevron-down"></span></li>
+  <li data-value="universe" style="display: none;">the Universe</li>
+  <li data-value="web" style="display: none;">the Web</li>
+  </ul>
+  <input type="text" placeholder="search" id="searchField" v-model="query">
+  <span class="icon blue-search"></span>
+  <a href="#" id="openInTelescope" style="line-height: 40px;margin-left: 3px"><span class="icon white-search" style="margin-bottom: -8px;"></span>&nbsp;Open in Telescope</a>
+  </header>
        <div id="loadingArea">
           <div class="listContainer" v-if="results.users">
              <header>Users</header>
              <ul class="list resultList">
-                <container v-for="user, index in results.users">
+                <container v-for="user, index in results.users">;
                     <li>
                        <userPicture :userid="user.id" size="30"></userPicture>
                        <a>{{user.name}}</a>
@@ -70,16 +70,16 @@ export default {
   },
   watch: {
     showsearch: {
-      handler: function(val, oldVal) {
-      	console.log(val);
+      handler: function(val) {
+  console.log(val);
         this.show=val;
       },
       deep: true
     },
     query: {
-      handler: function(val, oldVal) {
-      	console.log(val);
-      	this.search();
+  handler: function(val) {
+  console.log(val);
+  this.search();
       },
       deep: true
     }
@@ -107,12 +107,12 @@ export default {
     },
     sendFriendRequest:function(userid){
         user.sendFriendRequest(userid)
-        .then((result)=>{
+        .then(()=>{
           alertBus.$emit('alert', {
             text:'Friendrequest sent'
           });
         })
-        .catch((e)=>{
+        .catch(()=>{
           alertBus.$emit('alert', {
             text:'Error sending friend request'
           });
@@ -120,7 +120,7 @@ export default {
         });
     },
     hide:function(){
-    	this.show = false
+  this.show = false
     }
   },
   created:function(){
@@ -149,7 +149,7 @@ export default {
     background: #607d8b;
     color: #FFF;
     z-index: 999;
-  	-webkit-transition: right .3s ease;
+  -webkit-transition: right .3s ease;
 }
 
 #searchMenu header #toggleSearchMenu{

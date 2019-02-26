@@ -17,7 +17,7 @@ var user = function(){
           });
       })
     }
-    this.acceptFriendRequest = function(user_id, request_id){
+    this.acceptFriendRequest = function(){
 
       //get old buddylist
 

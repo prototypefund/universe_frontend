@@ -47,7 +47,7 @@ export default {
         name:this.name,
         privacy:this.privacy,
         link:this.link
-        },function(err,result,body){
+        },function(err){
           if(err){
             console.log(err);
           }
