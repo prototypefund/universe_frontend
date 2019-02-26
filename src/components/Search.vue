@@ -22,7 +22,7 @@
           <div class="listContainer" v-if="results.users">
              <header>Users</header>
              <ul class="list resultList">
-                <container v-for="user, index in results.users">;
+                <container v-for="user, index in results.users">
                     <li>
                        <userPicture :userid="user.id" size="30"></userPicture>
                        <a>{{user.name}}</a>
