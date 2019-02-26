@@ -23,13 +23,14 @@
 </template>
 
 <script>
-import { authBus,alertBus,modalBus,applicationBus, reloadBus } from '../main';
+import { authBus,alertBus,modalBus,applicationBus, reloadBus } from '@/main';
 import Dock from '@/components/Dock'
 import Registration from '@/components/Registration'
 import Application from '@/components/Application'
 import FileSystem from '@/components/filesystem/FileSystem'
 import Settings from '@/components/applications/Settings'
 import Buddylist from '@/components/applications/Buddylist'
+import Display from '@/components/applications/Display'
 
 import Modal from '@/components/gui/Modal'
 import Alert from '@/components/gui/Alert'
@@ -85,6 +86,19 @@ export default {
                   height:3,
                   left:9,
                   top:0.1
+                }
+
+
+              },
+        display:
+              {
+                title:'Display',
+                component:Display,
+                style:{
+                  width:6,
+                  height:3,
+                  left:2,
+                  top:2
                 }
 
 
