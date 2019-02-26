@@ -82,7 +82,7 @@ export default {
         api.get('user/getUserSalt/'+username,{
         },function(err,result,body){
           if(err){
-            if(error.error == 'no_user_found')
+            if(err.error == 'no_user_found')
               alert('No matching user found');
           }
           else{
