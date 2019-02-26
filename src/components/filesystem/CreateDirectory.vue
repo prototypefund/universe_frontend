@@ -41,7 +41,7 @@ export default {
         parent_directory_id:this.data.parent_directory_id,
         name:this.name,
         privacy:this.privacy
-        },function(err,result,body){
+        },function(err){
           if(err){
             console.log(err);
           }

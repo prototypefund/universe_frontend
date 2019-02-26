@@ -4,7 +4,7 @@
     <div id="loadingArea">
       <Modal v-if="modal.component && modal.title.length > 0" :title="modal.title" :component="modal.component" :data="modal.data"></Modal>
       <ul>
-        <li v-for="alert in alerts">
+        <li v-for="alert in alerts" :key="alert.text">
           <alert v-if="alert !=false" :text="alert.text"></alert>
         </li>
       </ul>
