@@ -6,22 +6,19 @@ import {
   decodeBase64
 } from "tweetnacl-util";
 
-
 var cry = function(){
     this.encodeBase64 = encodeBase64;
     this.symEncrypt = function(json, key){
       let keyHash = this.hash(key,'');
       keyHash = keyHash.slice(0, 32);
-
       //const keyUint8Array = decodeUTF8(keyHash);
       const nonce = nacl.randomBytes(nacl.secretbox.nonceLength);
-      const messageUint8 = decodeUTF8(JSON.stringify(json));
+      const str = JSON.stringify(json);
+      const messageUint8 = decodeUTF8(str);
       const box = nacl.secretbox(messageUint8, nonce, keyHash);
-
       const fullMessage = new Uint8Array(nonce.length + box.length);
       fullMessage.set(nonce);
       fullMessage.set(box, nonce.length);
-
       const base64FullMessage = encodeBase64(fullMessage);
       return base64FullMessage;
     };
