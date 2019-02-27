@@ -9,9 +9,7 @@
         </li>
       </ul>
     </div>
-
     <registration v-if="!auth"></registration>
-
     <ul>
       <li v-for="app in applications">
         <application :title="app.title" :component="app.component" :styles="app.style"></application>
@@ -58,52 +56,58 @@ export default {
     }
   },
   methods: {
-    initApplications: function () {
+    initApplications: function (authorized) {
       this.applications = {
         files:
               {
                 title:'Files',
-                component:FileSystem
-              },
-        settings:
-              {
-                title:'Settings',
-                component:Settings,
+                component:FileSystem,
                 style:{
-                  hidden:true,
                   width:6,
                   height:2,
                   left:2,
                   top:1
                 }
-              },
-        buddylist:
-              {
-                title:'Buddylist',
-                component:Buddylist,
-                style:{
-                  width:2,
-                  height:3,
-                  left:9,
-                  top:0.1
-                }
-
-
-              },
-        display:
-              {
-                title:'Display',
-                component:Display,
-                style:{
-                  width:6,
-                  height:3,
-                  left:2,
-                  top:2
-                }
-
-
               }
+
       }
+      if(authorized){
+        this.applications.settings = {
+          title:'Settings',
+          component:Settings,
+          style:{
+            hidden:true,
+            width:6,
+            height:2,
+            left:2,
+            top:1
+          }
+        };
+
+        this.applications.buddylist = {
+            title:'Buddylist',
+            component:Buddylist,
+            style:{
+              width:2,
+              height:3,
+              left:9,
+              top:0.1
+            }
+          };
+
+         this.applications.display = {
+            title:'Display',
+            component:Display,
+            style:{
+              width:6,
+              height:2,
+              left:2,
+              top:1
+            }
+          };
+      }
+
+      
       let self = this;
       setTimeout(()=>{
         applicationBus.$emit('applications', this.applications);
@@ -163,14 +167,10 @@ export default {
       });
       //will be called e.g. during login/logout
       applicationBus.$on('applications', (applications) => {
-        console.log(applications.settings);
-        console.log('asd');
         self.applications = applications;
-        console.log(self.applications);
         self.$forceUpdate();
       });
-
-      this.initApplications();
+      this.initApplications(this.auth);
 
   }
 }
