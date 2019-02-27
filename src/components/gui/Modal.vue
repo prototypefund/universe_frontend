@@ -39,6 +39,7 @@ export default {
   width: 400px;
   max-height: 75%;
   min-height:100px;
+  z-index: 99999;
 }
 .modal>header{
   font-size:24px;
