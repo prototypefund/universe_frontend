@@ -3,7 +3,7 @@
     <div class="modal">
       <header>
         {{ title }}
-        <span class="icon white-close close"></span>
+        <span class="icon white-close close" @click="close"></span>
       </header>
       <div class="content">
         <component :is="component" :data="data"></component>
@@ -11,13 +11,16 @@
     </div>
   </div>
 </template>
-
 <script>
+import { modalBus } from '@/main';
 export default {
   name: 'Modal',
   props: ['title', 'component', 'data'],
-  methods: {
-    
+  methods:{
+    close:function(){
+      //close modal
+      modalBus.$emit('modal', {});
+    }
   },
   mounted: function () {
       console.log('modal ready');
