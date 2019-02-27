@@ -117,10 +117,9 @@ export default {
                   jwt:body.jwt
                 });
                 localStorage.setItem('jwt',body.jwt);
-                localStorage.setItem('user',body.user);
-
+                localStorage.setItem('userid',body.user.id);
                 localStorage.setItem('passwordHash',passwordHash);
-
+                window.location.reload();
                 self.auth = true;
               }
             });
