@@ -23,7 +23,9 @@
                 <h1>Please Login</h1>
               </div>
             </tab>
-            <tab v-for="display_tab in display_tabs" :name="display_tab.name" :selected="display_tab.selected" v-html="display_tab.content">
+            <tab v-for="display_tab in display_tabs" :name="display_tab.name" :selected="display_tab.selected">
+              <showItem :item="display_tab.item"></showItem>
+
             </tab>
             <!--<tab name="whazzup">
                 <h1>What what whaaat?!</h1>
@@ -37,6 +39,8 @@ import linkUtil from '@/utils/link'
 
 import UniverseButton from '@/components/gui/UniverseButton'
 import UserPicture from '@/components/gui/UserPicture'
+
+import ShowItem from './ShowItem';
 import Tabs from '@/components/gui/Tabs'
 import Tab from '@/components/gui/Tab'
 
@@ -49,7 +53,8 @@ export default {
     UniverseButton,
     UserPicture,
     Tabs,
-    Tab
+    Tab,
+    ShowItem
   },
   data () {
     return {
@@ -65,49 +70,22 @@ export default {
       }
       this.display_tabs.push(tabData);
     },
-    generateFileBrowser:function(name, content){
-      return '<div class="linkBrowser"><header>youtube'+name+'</header><div class="browserContent">'+content+'</div></div>';
-    },
     openFile:function(item){
-      file.loadFile(item.data.id)
-      .then((result)=>{
-
-        let content;
-        switch(result.file.filename.split('.').pop()){
-          case 'txt':
-            content = result.filecontent
-          break;
-        }
-
-        let html = this.generateFileBrowser(item.data.name, content);
+        console.log('itemtem');
+        console.log(item);
         this.openTab({
-          name:result.file.name,
-          content:html,
-          selected:true
+          name:item.data.name,
+          selected:true,
+          item:item
         })
-      })
-      .catch((e)=>{
-        console.log('E');
-        console.log(e);
-      });
     },
     openLink:function(link){
       //openlink loads a webshot image of the link if its an unknown format.
-
-      let content = ''
-      let yt = linkUtil.validateYoutubeUrl(link.data.link); //either returns youtube videoid or false
-      if(yt){
-        content = '<iframe id="ytplayer" type="text/html" width="640" height="360" src="http://www.youtube.com/embed/'+yt+'?autoplay=1&origin=http://example.com" frameborder="0"/>';
-
-      }else{
-        content = '<div class="linkBrowser"><header>'+link.data.name+'</header><div class="browserContent"><img src="https://webshotserver.herokuapp.com/api/'+encodeURIComponent(link.data.link)+'"></div></div>';
-
-      }
-      let html = this.generateFileBrowser(link.data.name, content);
+      link.type = 'link';
       this.openTab({
           name:link.data.name,
-          content:html,
-          selected:true
+          selected:true,
+          item:link
       });
     }
   },
