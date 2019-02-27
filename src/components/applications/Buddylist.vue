@@ -1,18 +1,20 @@
 <template>
-    <div>
-    <ul>
-    <li v-for="buddy in buddies">
-    <span>
-    <userPicture :userid="1" size="40"></userPicture>
-    </span>
-    <span>
-    Juergen Vogel
-    </span>
-    <a href="#" onclick="User.showProfile('2194'); return false" title="open Profile"><span class="icon icon-user"></span></a>
-    <a href="#" onclick="im.openDialogue('tusk'); return false" title="write Message"><span class="icon icon-envelope"></span></a>
-    <a href="#" onclick="settings.showUpdateBuddylistForm(); return false" title="write Message"><span class="icon dark-gear"></span></a>
-    </li>
-    </ul>
+    <div class="buddylist">
+      <ul>
+        <li v-for="buddy in buddies">
+          <div class="userpicture">
+            <userPicture :userid="buddy.id" size="40"></userPicture>
+          </div>
+          <div class="username">
+          {{buddy.username}}
+          </div>
+          <div class="buttons">
+            <a href="#" onclick="User.showProfile(buddy.id); return false" title="open Profile"><span class="icon icon-user"></span></a>
+            <a href="#" onclick="im.openDialogue('tusk'); return false" title="write Message"><span class="icon icon-envelope"></span></a>
+            <!--<a href="#" onclick="settings.showUpdateBuddylistForm(); return false" title="write Message"><span class="icon dark-gear"></span></a>-->
+          </div>
+        </li>
+      </ul>
     </div>
 </template>
 <script>
@@ -43,3 +45,28 @@ export default {
   }
 }
 </script>
+<style scoped>
+.buddylist ul{
+  width:100%;
+}
+.buddylist ul li div{
+  float:left;
+  margin:5px;
+}
+.buddylist ul li div.userpicture{
+  width:45px;
+}
+.buddylist ul li div.username{
+    font-size: 27px;
+    padding: 9px 0;
+    width: 100px;
+}
+.buddylist ul li div.buttons{
+  padding: 9px 0;
+  float:right;
+  width:70px;
+}
+.buddylist ul li div.buttons a{
+  float:left;
+}
+</style>
