@@ -22,8 +22,8 @@
       </ul>
       <ul>
         <li class="header">Files</li>
-        <li v-if="files.length > 0">No files uploaded. Click on the settings button above to upload them.</li>
-        <li v-for="file in files">
+        <li v-if="files.length == 0">No files uploaded. Click on the settings button above to upload them.</li>
+        <li v-for="file in files" @click="openFile(file)">
           <span class="icons">
             <span class="icon icon-file"></span>
           </span>
@@ -37,10 +37,25 @@
           <span class="date" style="display: none;">1970 Jan 01</span>
         </li>
 
+        <!--<li class="header">Images</li>
+        <li>No images uploaded. Click on the settings button above to upload them.</li>-->
+
         <li class="header">Images</li>
-        <li>No images uploaded. Click on the settings button above to upload them.</li>
-        <li class="header">Links</li>
-        <li>No links added. Click on the settings button above to add them.</li>
+        <li v-if="links.length == 0">No links added. Click on the settings button above to add them.</li>
+        <li v-for="link in links" @click="openLink(link)">
+          <span class="icons">
+            <span class="icon icon-file"></span>
+          </span>
+          <span class="title">
+            {{link.name}}
+          </span>
+          <span class="buttons">
+            <span class="icon icon-gear"></span>
+          </span>
+          <span class="size" style="display: none;">138 kB</span>
+          <span class="date" style="display: none;">1970 Jan 01</span>
+        </li>
+
       </ul>
   </div>
 </template>
@@ -64,13 +79,13 @@ export default {
       filesystemBus:{},
       collection_id:0,
       name:'',
-      files:[]
+      files:[],
+      links:[]
     }
   },
   props:['collection'],
   watch: {
     collection: function (collection_id) {
-        console.log('UPDATE!'+collection_id);
       this.openCollection(collection_id);
     }
   },
@@ -88,7 +103,6 @@ export default {
         });
     },
     openCollection:function(id){
-      console.log('open collection');
       this.openCollectionOnBusUpdate = false;
       this.filesystemBus.directory_id = -1;
       this.filesystemBus.collection_id = id;
@@ -98,6 +112,7 @@ export default {
       this.getItems(id,function(result){
         self.name = result.info.name;
         self.files = result.files;
+        self.links = result.links;
       });
     },
     uploadFile:function(){
@@ -105,6 +120,18 @@ export default {
         title:'Upload File',
         component:UploadFile,
         data:{collection_id:this.collection_id}
+      });
+    },
+    openFile:function(file){
+      applicationBus.$emit('display', {
+        type:'file',
+        data:file
+      });
+    },
+    openLink:function(link){
+      applicationBus.$emit('display', {
+        type:'link',
+        data:link
       });
     },
     addLink:function(){
