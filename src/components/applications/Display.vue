@@ -23,6 +23,8 @@
                 <h1>Please Login</h1>
               </div>
             </tab>
+            <tab v-for="display_tab in display_tabs" :name="display_tab.name" :selected="display_tab.selected" v-html="display_tab.content">
+            </tab>
             <!--<tab name="whazzup">
                 <h1>What what whaaat?!</h1>
             </tab>-->
@@ -30,13 +32,16 @@
     </div>
 </template>
 <script>
+import file from '@/utils/file'
+import linkUtil from '@/utils/link'
+
 import UniverseButton from '@/components/gui/UniverseButton'
 import UserPicture from '@/components/gui/UserPicture'
 import Tabs from '@/components/gui/Tabs'
 import Tab from '@/components/gui/Tab'
 
 
-import { authBus } from '@/main';
+import { authBus, applicationBus } from '@/main';
 
 export default {
   name: 'Display',
@@ -48,16 +53,62 @@ export default {
   },
   data () {
     return {
-      auth:false
+      auth:false,
+      display_tabs:[]
     }
   },
   methods:{
-    submit:function(){
-      
+    openTab:function(tabData){
+      //deselect all other tabs
+      for (let i = 0; i < this.display_tabs.length; i++) {
+        this.display_tabs[i].selected = false;
+      }
+      this.display_tabs.push(tabData);
+    },
+    openFile:function(file){
+      file.loadFile(file.data.id)
+      .then((result)=>{
+        this.openTab({
+          name:result.file.name,
+          content:result.filecontent,
+          selected:true
+        })
+      })
+      .catch((e)=>{
+        console.log('E');
+        console.log(e);
+      });
+    },
+    openLink:function(link){
+      //openlink loads a webshot image of the link if its an unknown format.
+
+      let content = ''
+      let yt = linkUtil.validateYoutubeUrl(link.data.link); //either returns youtube videoid or false
+      if(yt){
+        content = '<iframe id="ytplayer" type="text/html" width="640" height="360" src="http://www.youtube.com/embed/'+yt+'?autoplay=1&origin=http://example.com" frameborder="0"/>';
+
+      }else{
+        content = '<div class="linkBrowser"><header>youtube'+link.data.name+'</header><div class="browserContent"><img src="https://webshotserver.herokuapp.com/api/'+encodeURIComponent(link.data.link)+'"></div></div>';
+
+      }
+      let html = '<div class="linkBrowser"><header>youtube'+link.data.name+'</header><div class="browserContent">'+content+'</div></div>';
+      this.openTab({
+          name:link.data.name,
+          content:html,
+          selected:true
+      });
     }
   },
   created:function(){
     let self = this;
+    applicationBus.$on('display', (item) => {
+      if(item.type == 'file')
+        this.openFile(item);
+      else if(item.type == 'link')
+        this.openLink(item)
+
+    });
+
     authBus.$on('auth', (authObj) => {
         if(typeof authObj.jwt != 'undefined'){
           self.auth = true;
