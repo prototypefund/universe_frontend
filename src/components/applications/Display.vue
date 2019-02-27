@@ -65,12 +65,24 @@ export default {
       }
       this.display_tabs.push(tabData);
     },
-    openFile:function(file){
-      file.loadFile(file.data.id)
+    generateFileBrowser:function(name, content){
+      return '<div class="linkBrowser"><header>youtube'+name+'</header><div class="browserContent">'+content+'</div></div>';
+    },
+    openFile:function(item){
+      file.loadFile(item.data.id)
       .then((result)=>{
+
+        let content;
+        switch(result.file.filename.split('.').pop()){
+          case 'txt':
+            content = result.filecontent
+          break;
+        }
+
+        let html = this.generateFileBrowser(item.data.name, content);
         this.openTab({
           name:result.file.name,
-          content:result.filecontent,
+          content:html,
           selected:true
         })
       })
@@ -88,10 +100,10 @@ export default {
         content = '<iframe id="ytplayer" type="text/html" width="640" height="360" src="http://www.youtube.com/embed/'+yt+'?autoplay=1&origin=http://example.com" frameborder="0"/>';
 
       }else{
-        content = '<div class="linkBrowser"><header>youtube'+link.data.name+'</header><div class="browserContent"><img src="https://webshotserver.herokuapp.com/api/'+encodeURIComponent(link.data.link)+'"></div></div>';
+        content = '<div class="linkBrowser"><header>'+link.data.name+'</header><div class="browserContent"><img src="https://webshotserver.herokuapp.com/api/'+encodeURIComponent(link.data.link)+'"></div></div>';
 
       }
-      let html = '<div class="linkBrowser"><header>youtube'+link.data.name+'</header><div class="browserContent">'+content+'</div></div>';
+      let html = this.generateFileBrowser(link.data.name, content);
       this.openTab({
           name:link.data.name,
           content:html,
