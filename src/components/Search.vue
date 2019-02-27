@@ -1,28 +1,28 @@
 <template>
-	<div id="searchMenu" :class="{ 'slideLeft' : show == true}">
+<div id="searchMenu" :class="{ 'slideLeft' : show == true}">
   <header>
-  <a href="#" id="toggleSearchMenu" @click="hide"><span class="icon white-close"></span></a>
-  <h2>Search</h2>
-  <ul id="selectSource" class="">
-  <li class="trigger">Everything <span class="icon blue-chevron-down"></span></li>
-  <li data-value="text" style="display: none;">Text</li>
-  <li data-value="video" style="display: none;">Video</li>
-  <li data-value="audio" style="display: none;">Audio</li>
-  </ul>
-  <ul id="selectType" class="">
-  <li class="trigger">Everywhere <span class="icon blue-chevron-down"></span></li>
-  <li data-value="universe" style="display: none;">the Universe</li>
-  <li data-value="web" style="display: none;">the Web</li>
-  </ul>
-  <input type="text" placeholder="search" id="searchField" v-model="query">
-  <span class="icon blue-search"></span>
-  <a href="#" id="openInTelescope" style="line-height: 40px;margin-left: 3px"><span class="icon white-search" style="margin-bottom: -8px;"></span>&nbsp;Open in Telescope</a>
+    <a href="#" id="toggleSearchMenu" @click="hide"><span class="icon white-close"></span></a>
+    <h2>Search</h2>
+    <ul id="selectSource" class="">
+    <li class="trigger">Everything <span class="icon blue-chevron-down"></span></li>
+    <li data-value="text" style="display: none;">Text</li>
+    <li data-value="video" style="display: none;">Video</li>
+    <li data-value="audio" style="display: none;">Audio</li>
+    </ul>
+    <ul id="selectType" class="">
+    <li class="trigger">Everywhere <span class="icon blue-chevron-down"></span></li>
+    <li data-value="universe" style="display: none;">the Universe</li>
+    <li data-value="web" style="display: none;">the Web</li>
+    </ul>
+    <input type="text" placeholder="search" id="searchField" v-model="query">
+    <span class="icon blue-search"></span>
+    <a href="#" id="openInTelescope" style="line-height: 40px;margin-left: 3px"><span class="icon white-search" style="margin-bottom: -8px;"></span>&nbsp;Open in Telescope</a>
   </header>
        <div id="loadingArea">
           <div class="listContainer" v-if="results.users">
              <header>Users</header>
              <ul class="list resultList">
-                <container v-for="user, index in results.users">;
+                <container v-for="user, index in results.users" :key="user.id">;
                     <li>
                        <userPicture :userid="user.id" size="30"></userPicture>
                        <a>{{user.name}}</a>
@@ -40,7 +40,7 @@
              <div class="loadAll" data-type="users"><a href="#">show all</a></div>
           </div>
       </div>
-	</div>
+</div>
 </template>
 <script>
 
@@ -186,7 +186,7 @@ export default {
 }
 
 #searchMenu header ul:first-of-type li{
-	margin-left: -2px;
+  margin-left: -2px;
 }
 #searchMenu header ul li{
     cursor: pointer;
@@ -201,11 +201,11 @@ span.icon.blue-chevron-down {
     bottom: 0;
 }
 #searchMenu header ul li .icon{
-	width: 32px;
-	
-	height: 32px;
-	margin-bottom: -10px;
-	margin-top: -5px;
+  width: 32px;
+  
+  height: 32px;
+  margin-bottom: -10px;
+  margin-top: -5px;
 }
 
 #searchMenu header ul li.trigger{
@@ -241,7 +241,7 @@ span.icon.blue-chevron-down {
 }
 
 #searchMenu .userPicture {
-	margin: 1px 5px;
+  margin: 1px 5px;
 }
 
 .suggestionList:empty,
@@ -300,16 +300,16 @@ span.icon.blue-chevron-down {
 }
 
 #searchMenu > .listContainer:first-of-type{
-	clear: left;
+  clear: left;
 }
 #searchMenu > .listContainer{
-	margin: 50px 15px;
-	margin-bottom: 0px;
+  margin: 50px 15px;
+  margin-bottom: 0px;
 }
 
 #searchMenu .list{
-	background: #ffffff;
-	overflow: auto;
+  background: #ffffff;
+  overflow: auto;
 }
 
 
