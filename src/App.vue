@@ -93,6 +93,26 @@ input[type=text], input[type=password] {
   border-bottom: 1px solid #263238;
 }
 
+.directoryList li, .blue-settings li{
+  clear: both;
+}
+
+.blue-settings li{
+  clear: both;
+  height:38px;
+}
+
+.directoryList li>span, .blue-settings li>span{
+  float:left;
+}
+
+.directoryList li>span.title, .blue-settings li>span.title{
+  height: 35px;
+  display: block;
+  padding: 9px 5px;
+  float: left;
+}
+
 .leftNav{
   background: #cfd8dc;
   position: absolute;

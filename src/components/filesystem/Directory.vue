@@ -1,35 +1,35 @@
 <template>
   <div>
       <header>
-        {{path}}
+        <span class="path">{{path}}</span>
         <span class="icon icon-gear pull-right" v-if="auth" @click="showSettings=!showSettings"></span>
       </header>
       <ul class="blue-settings" v-if="showSettings">
         <li>
           <span class="icon white-heart"></span>
-          Add to favorites
+          <span class="title">Add to favorites</span>
         </li>
         <li @click="createDirectory(directory_id)">
           <span class="icon white-folder"></span>
-          Add folder
+          <span class="title">Add folder</span>
         </li>
         <li @click="createCollection(directory_id)">
           <span class="icon white-filesystem"></span>
-          Add collection
+          <span class="title">Add collection</span>
         </li>
       </ul>
-      <ul>
+      <ul class="directoryList">
         <li @click="openDirectory(0)">
           <span class="icon icon-folder"></span>
-          ..
+          <span class="title">..</span>
         </li>
         <li v-for="directory in directories" @click="openDirectory(directory.id)">
           <span class="icon icon-folder"></span>
-          {{directory.name}}
+          <span class="title">{{directory.name}}</span>
         </li>
         <li v-for="collection in collections" @click="openCollection(collection.id)">
           <span class="icon icon-filesystem"></span>
-          {{collection.name}}
+          <span class="title">{{collection.name}}</span>
         </li>
       </ul>
   </div>
@@ -185,5 +185,11 @@ export default {
   overflow: hidden;
   border-bottom: 1px solid #dcdcdc;
   padding: 10px;
+}
+
+header>.path{
+    margin-top: 7px;
+    display: block;
+    float: left;
 }
 </style>

@@ -28,7 +28,9 @@ import Application from '@/components/Application'
 import FileSystem from '@/components/filesystem/FileSystem'
 import Settings from '@/components/applications/Settings'
 import Buddylist from '@/components/applications/Buddylist'
-import Display from '@/components/applications/Display'
+import Display from '@/components/applications/Display/Display'
+import Chat from '@/components/applications/Chat'
+
 
 import Modal from '@/components/gui/Modal'
 import Alert from '@/components/gui/Alert'
@@ -65,8 +67,8 @@ export default {
                 style:{
                   width:6,
                   height:2,
-                  left:2,
-                  top:1
+                  left:1,
+                  top:0.5
                 }
               }
 
@@ -103,6 +105,17 @@ export default {
               height:2,
               left:2,
               top:1
+            }
+          };
+
+         this.applications.chat = {
+            title:'Chat',
+            component:Chat,
+            style:{
+              width:3,
+              height:1,
+              left:3,
+              top:2
             }
           };
       }

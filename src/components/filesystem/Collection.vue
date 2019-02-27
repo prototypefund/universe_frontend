@@ -2,7 +2,7 @@
   <div>
       <header>
         <span class="icon icon-filesystem"></span>
-        <span class="elementtitle">{{name}}</span>
+        <span class="title">{{name}}</span>
         <span class="headerbuttons">
           <span class="icon blue-list"></span>
           <span class="icon icon-small-symbols"></span>
@@ -13,14 +13,14 @@
       <ul class="blue-settings" v-if="showSettings">
         <li @click="uploadFile()">
           <span class="icon white-file"></span>
-          Upload files
+          <span class="title">Upload files</span>
         </li>
         <li @click="addLink()">
           <span class="icon white-file"></span>
-          Add Link
+          <span class="title">Add Link</span>
         </li>
       </ul>
-      <ul>
+      <ul class="collectionList">
         <li class="header">Files</li>
         <li v-if="files.length == 0">No files uploaded. Click on the settings button above to upload them.</li>
         <li v-for="file in files" @click="openFile(file)">
@@ -31,20 +31,19 @@
             {{file.name}}
           </span>
           <span class="buttons">
+            <span class="icon icon-download"></span>
             <span class="icon icon-gear"></span>
           </span>
-          <span class="size" style="display: none;">138 kB</span>
-          <span class="date" style="display: none;">1970 Jan 01</span>
         </li>
 
         <!--<li class="header">Images</li>
         <li>No images uploaded. Click on the settings button above to upload them.</li>-->
 
-        <li class="header">Images</li>
+        <li class="header">Links</li>
         <li v-if="links.length == 0">No links added. Click on the settings button above to add them.</li>
         <li v-for="link in links" @click="openLink(link)">
           <span class="icons">
-            <span class="icon icon-file"></span>
+            <span class="icon icon-link"></span>
           </span>
           <span class="title">
             {{link.name}}
@@ -52,8 +51,6 @@
           <span class="buttons">
             <span class="icon icon-gear"></span>
           </span>
-          <span class="size" style="display: none;">138 kB</span>
-          <span class="date" style="display: none;">1970 Jan 01</span>
         </li>
 
       </ul>
@@ -168,17 +165,55 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
 header {
   height: 60px;
-  padding-top: 12px;
-  padding-right: 10px;
+  padding: 0 10px;
   border-bottom: 1px solid #cfd8dc;
+}
+header>span{
+  display: block;
+  margin: 13px 0;
+  float: left;
+}
+header .title{
+  padding-top:10px;
+  padding-left:5px;
 }
 header .headerbuttons{
   float:right;
+  padding-right:10px;
+}
+li.header{
+    padding: 10px 0 10px 0;
+    color: #00bcd4;
+    font-size: 20px;
+    font-weight: 300;
+    margin-left: 10px;
 }
 
-li.header{
-  color: #00bcd4;
+.collectionList .buttons{
+  float:right;
+  padding-right:5px;
 }
+
+.collectionList li{
+  clear:left;
+}
+
+.collectionList li>span.icons{
+  padding-left: 10px;
+}
+
+.collectionList li>span{
+  float:left;
+  display:block;
+
+}
+
+.collectionList li>.title{
+  padding-top:10px;
+}
+
+
 </style>
