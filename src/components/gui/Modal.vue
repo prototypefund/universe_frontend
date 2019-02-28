@@ -53,6 +53,7 @@ export default {
   padding:15px;  
 }
 .modal>header>.close{
+  cursor:pointer;
   position: absolute;
   right: 10px;
   top: 10px;
