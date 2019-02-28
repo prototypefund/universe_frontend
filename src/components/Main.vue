@@ -10,11 +10,13 @@
       </ul>
     </div>
     <registration v-if="!auth"></registration>
-    <ul>
-      <li v-for="app in applications">
-        <application :title="app.title" :component="app.component" :styles="app.style"></application>
-      </li>
-    </ul>
+    <div id="desktop">
+      <ul>
+        <li v-for="app in applications">
+          <application :title="app.title" :component="app.component" :styles="app.style"></application>
+        </li>
+      </ul>
+    </div>
 
     <Dock></Dock>
   </div>
@@ -191,4 +193,11 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+#desktop{
+  position:fixed;
+  top:0;
+  right:0;
+  bottom:40px;
+  left:0;
+}
 </style>
