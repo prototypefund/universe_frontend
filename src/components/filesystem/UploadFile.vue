@@ -52,14 +52,9 @@ export default {
   props: ['data'],
   methods:{
     prepareTempFile(file){
-      /*const reader = new FileReader();
-        reader.addEventListener("loadend", function(event) { console.log(event.target.result);});
-        reader.readAsText(this.$refs.uploadDropzone.dropzone.files[fileIndex]);*/
-
-      //update file
-      var newFile = new File(["foo"], "foo.txt", {
-        type: "text/plain",
-      });
+      
+      //assign file out of dropzone que to new var
+      let newFile = this.$refs.uploadDropzone.dropzone.files[this.fileIndex];
 
       //remove old file
       if(this.updateFileDuringPreparation){
