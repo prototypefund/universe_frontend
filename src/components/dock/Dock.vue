@@ -1,7 +1,5 @@
 <template>
   <div>
-
-
     <div id="loginBox" v-if="!auth">
                 <form method="post" target="submitter" id="loginForm" onsubmit="login(); return false;">
                   <div>
@@ -233,6 +231,8 @@ export default {
 
 #loginBox{
   position: absolute;
+  display:none;
+  z-index: 2;
   bottom: 40px;
   left: 0px;
   background-color: #607d8b;

@@ -1,7 +1,7 @@
 <template>
           <div class="guestArea">
-            <h2>universe</h2>
-            <h3>Welcome to the universe - the first social webOS</h3>
+            <img src="img/guest/guest_header.svg" id="headerIMG">
+            <p id="subHeader">Welcome to the universeOS – the first social webOS</p>
             <div class="guestBox registerBox">
                 <h2>Sign Up</h2>
                 <div class="pull-left">
@@ -48,7 +48,7 @@
 
 
 
-                      <universeButton text="Sign me up!" :click="submitRegistration" style="float: right;margin-right: 15px;margin-top: -8px;"></universeButton>
+                      <universeButton text="Sign me up!" :click="submitRegistration" style="float: right;margin-top: -27px;margin-right: 0px;"></universeButton>
                     </form>
                 </div>
                 <img v-if="showLoadingArea" src="~@/assets/gfx/loading-bubbles.svg" width="150" height="150">
@@ -124,14 +124,15 @@ export default {
           userKeys:userKeys 
         },function(err,result){
           if(err){
-            alert(err)
+            alertBus.$emit('alert', {
+              text:err
+            });
           }
           else{
             alertBus.$emit('alert', {
               text:'Welcome '+self.username
             });
-            $('#guestArea').slideUp();
-            console.log(result);
+            $('.guestArea').slideUp();
           }
           
         });
@@ -213,11 +214,33 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+.guestArea{
+  margin-left:10px;
+}
+
+#headerIMG{
+  width: 360px;
+  margin-bottom: 25px;
+  display: block;
+  margin: 25px 0;
+}
+
+#subHeader {
+  width: 910px;
+  display: block;
+  margin-bottom: 25px;
+  color: #FFF;
+  font-size: 38px;
+}
+
 .guestBox.registerBox {
-    background-color: #607d8b;
+  background-color: #607d8b;
 }
 
 .guestBox{
+  position:absolute;
+  z-index:1;
   background-color: #37474f;
   width: 335px;
   float: left;
@@ -227,6 +250,9 @@ export default {
   padding: 25px;
 }
 
+.checkboxContainer:first-of-type{
+  margin-top:0;
+}
 .checkboxContainer{
   margin: 7px 0;
   clear: both;
@@ -238,7 +264,7 @@ export default {
 }
 
 .guestBox input[type="text"], .guestBox input[type="password"] {
-  width: 320px;
+  width: 280px;
   height: 40px;
   margin: 15px 0;
   border: none;
@@ -251,8 +277,7 @@ export default {
 }
 
 .regError {
-  position: absolute;
-  background-color: #790125;
+  position: fixed;
   margin-top: -50px;
   height: 30px;
   line-height: 30px;
@@ -260,7 +285,7 @@ export default {
   padding-right: 5px;
   text-align: left;
   width: auto;
-  margin-left: 353px;
+  margin-left: 288px;
   display: inline;
   background: rgb(121, 1, 37);
 }
@@ -296,6 +321,7 @@ export default {
 
 #registrationForm input[type="checkbox"]{
     display: inline-block;
-    height: 9px;
+    height: 13px;
+    margin-right: 5px;
 }
 </style>

@@ -199,5 +199,6 @@ export default {
   right:0;
   bottom:40px;
   left:0;
+  z-index:0;
 }
 </style>
