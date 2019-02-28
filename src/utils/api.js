@@ -32,13 +32,15 @@ var api = function(){
         }
         //var headers = res.headers 
         if(res.statusCode == 400){
-          if(body.message == 'Invalid auth token provided.'){
-          localStorage.clear();
-          window.location.reload();
+          cb(res.body);
+          if(typeof body.message != undefined &&body.message == 'Invalid auth token provided.'){
+            localStorage.clear();
+            window.location.reload();
           }
+            
         } 
         else
-        cb(null,res,body);
+          cb(null,res,body);
       });
     };
     this.get = function(action,parameters,cb){
@@ -52,13 +54,8 @@ var api = function(){
     }
     this.postFile = function(action, parameters, file, cb){
 
-      console.log('asd1');
       const url = this.baseURL+'/'+action;
       let req = new XMLHttpRequest();
-
-
-      
-   
 
       let formData = new FormData();
       for(var i in parameters){
