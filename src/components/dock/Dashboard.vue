@@ -7,63 +7,35 @@
         <header>Applications</header>
         <div class="content">
           <ul class="appList">
-            <li onclick="applications.show('filesystem');" onmouseup="closeDockMenu()"><img src="gfx/applicationIcons/white/filesystem.svg" border="0" height="32" width="32">filesystem</li>
+            <li v-for="application in applications">
+                <img :src="'img/appIcons/white/'+application.title+'.svg'" border="0" height="32" width="32">
+                <span class="title">{{application.title}}</span>
+            </li>
           </ul>
         </div>
-      </div>
-      <div class="dashBox" id="groupBox">
-        <a class="dashClose"></a>
-        <header>Your Groups</header>
-        <div class="content">
-          <p class="overlength">No Groups :/</p>
-        </div>
-        <footer><a href="#addGroup" onclick="groups.showCreateGroupForm();" title="Create a new Group"><i class="icon white-plus" style="color:#FFF; margin-bottom: -10px;"></i></a></footer>
-      </div>
-      <div class="dashBox" id="playlistBox">
-        <a class="dashClose"></a>
-        <header>Your Playlists</header>
-        <div class="content">
-          <ul></ul>
-        </div>
-        <footer><a href="#addPlaylist" onclick="playlists.showCreationForm();" title="Create a new Playlist"><i class="icon white-plus" style="color:#FFF"></i></a></footer>
-      </div>
-      <div class="dashBox" id="favBox">
-        <a class="dashClose"></a>
-        <header>Your Favorites</header>
-        <div class="content">
-          <div>
-            <ul id="favList">
-              <li class="overlength">You don't have any favourites so far.</li>
-            </ul>
-          </div>
-        </div>
-        <footer> </footer>
-      </div>
-      <div class="dashBox" id="taskBox">
-        <a class="dashClose"></a>
-        <header>Future Tasks</header>
-        <div class="content">
-          <ul></ul>
-        </div>
-        <footer><a href="#addTask" onclick="tasks.addForm();" title="Create a new Task"><i class="icon white-plus" style="color:#FFF"></i></a></footer>
-      </div>
-      <div class="dashBox" id="helpBox_box">
-        <a class="dashClose"></a>
-        <header>Need Help?</header>
-        <div class="content">Have a look at the <a href="//wiki.transparency-everywhere.com/en/" target="_blank" title="Open the Transparency-Everywhere Wiki">wiki</a><br>Or take our <a href="#" onclick="support.showTour();">tour</a></div>
       </div>
     </div>
   </div>
 </div>
 </template>
 <script>
+import { applicationBus } from '@/main';
 export default {
   name: 'Dashboard',
+  data () {
+    return {
+      applications:{}
+    }
+  },
   methods: {
 
     
   },
   mounted: function () {
+    let self = this;
+    applicationBus.$on('applications', (applications) => {
+        self.applications = applications
+    });
 
   },
 
@@ -170,4 +142,33 @@ export default {
         display: none;
         cursor: pointer;
     }
+    #dashBoard .appList{
+                    border-right: none;
+                }
+                #dashBoard .appList li{
+                    background: #00bcd4;
+                }
+                
+                #dashBoard .appList li img, #dashBoard .appList li .title{
+                    float:left;
+                    margin-right: 5px;
+                }
+                
+                #dashBoard .appList li:hover{
+                    background: #18ffff;
+                }
+            
+                #dashBoard li{
+                    padding: 5px;
+                    padding-bottom: 12px;
+                    cursor: pointer;
+                    float: left;
+                    font-size: 16px;
+                    line-height: 30px;
+                    width: 161px;
+                    height: 40px;
+                    background: #1a1b1b;
+                    margin-bottom: 15px;
+                }
+
 </style>
