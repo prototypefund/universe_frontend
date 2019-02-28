@@ -23,7 +23,7 @@
                 <h1>Please Login</h1>
               </div>
             </tab>
-            <tab v-for="display_tab in display_tabs" :name="display_tab.name" :selected="display_tab.selected">
+            <tab v-for="display_tab in display_tabs" :name="display_tab.name" :selected="display_tab.selected" v-if="display_tab.item">
               <showItem :item="display_tab.item"></showItem>
 
             </tab>
@@ -59,20 +59,18 @@ export default {
   data () {
     return {
       auth:false,
-      display_tabs:[]
+      display_tabs:[{'name':'Home','selected':true,item:false}]
     }
   },
   methods:{
     openTab:function(tabData){
       //deselect all other tabs
-      for (let i = 0; i < this.display_tabs.length; i++) {
+      for (let i in this.display_tabs) {
         this.display_tabs[i].selected = false;
       }
       this.display_tabs.push(tabData);
     },
     openFile:function(item){
-        console.log('itemtem');
-        console.log(item);
         this.openTab({
           name:item.data.name,
           selected:true,
