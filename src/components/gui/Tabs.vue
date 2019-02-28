@@ -63,6 +63,9 @@ export default {
     display: table-cell;
     position:relative;
 }
+.tabs>ul>li>a{
+    padding: 10px 30px 10px 10px;
+}
 .tabs>ul>li.is-active{
     background: #fff;
 }
@@ -72,6 +75,7 @@ export default {
     height: 20px;
     right: -10px;
     position: absolute;
+    cursor:pointer;
 }
 
 .tabs>ul>li.is-active .close{
