@@ -22,7 +22,7 @@
 
 <script>
 import { authBus,alertBus,modalBus,applicationBus, reloadBus } from '@/main';
-import Dock from '@/components/Dock'
+import Dock from '@/components/dock/Dock'
 import Registration from '@/components/Registration'
 import Application from '@/components/Application'
 import FileSystem from '@/components/filesystem/FileSystem'
