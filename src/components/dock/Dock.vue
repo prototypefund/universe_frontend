@@ -15,7 +15,9 @@
                   </div>
                 </form>
     </div>
-
+    <div id="dashboardWrapper" :class="{ 'down': !showDashboard }">
+      <Dashboard></Dashboard>
+    </div>
     <ul>
       <li v-for="notification in openRequests">
         <notification :notification="notification" type="request"></notification>
@@ -27,48 +29,43 @@
         <universeButton text="Login" :click="toggleLogin" v-if="!auth"></universeButton>
         <universeButton text="Apps"></universeButton>
       </div>
-      <div v-if="auth">
-                      <i class="icon white-chevron-up"></i>
-                      <i class="icon white-eye"></i>
-                      <i class="icon white-user"></i>
-                      <i class="icon white-comment"></i>
-                      <i class="icon white-logout" @click="logout"></i>
-
-
-    
+      <div v-if="auth" id="buttons">
+        <i class="icon white-chevron-down" v-if="showDashboard" @click="toggleDashboard"></i>
+        <i class="icon white-chevron-up" v-if="!showDashboard" @click="toggleDashboard"></i>
+        <span id="startButton">
+          <i class="icon white-eye"></i>
+          <i class="icon white-user"></i>
+          <i class="icon white-comment"></i>
+        </span>
+        <i class="icon white-logout" @click="logout"></i>
       </div>
       <div class="pull-right" id="dockRight">
-            <a v-if="auth" title="search something" id="searchTrigger" @click="showSearch"><span class="icon white-search"></span></a>
-
-            <a v-if="auth" title="settings" id="settingsTrigger" @click="showSettings"><span class="icon white-gear"></span></a>
-
-            <div id="clock" v-html="dateTime">
-            </div>
+        <a v-if="auth" title="search something" id="searchTrigger" @click="showSearch"><span class="icon white-search"></span></a>
+        <a v-if="auth" title="settings" id="settingsTrigger" @click="showSettings"><span class="icon white-gear"></span></a>
+        <div id="clock" v-html="dateTime"></div>
       </div>
-
-
     </div>
     <search :showsearch="showsearch"></search>
   </div>
 </template>
 
 <script>
-
 import $ from 'jquery';
+import Dashboard from '@/components/dock/Dashboard'
 import Search from '@/components/Search'
 import UniverseButton from '@/components/gui/UniverseButton'
 import Notification from '@/components/gui/Notification'
-import api from '../utils/api'
-import cry from '../utils/crypto'
-import { authBus, applicationBus, reloadBus } from '../main';
-
+import api from '@/utils/api'
+import cry from '@/utils/crypto'
+import { authBus, applicationBus, reloadBus } from '@/main';
 
 export default {
   name: 'Dock',
   components: {
     UniverseButton,
     Search,
-    Notification
+    Notification,
+    Dashboard
   },
   data () {
     return {
@@ -78,6 +75,7 @@ export default {
       dateTime:'',
       applications:{},
       showsearch:false,
+      showDashboard:false,
       openRequests:[]
     }
   },
@@ -131,6 +129,9 @@ export default {
       localStorage.clear();
       window.location.reload();
     },
+    toggleDashboard : function(){
+      this.showDashboard = !this.showDashboard;
+    },
     toggleLogin : function(){
       $('#loginBox').slideToggle();
     },
@@ -170,24 +171,41 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+#dashboardWrapper{
+  position: absolute;
+  height: 250px;
+  bottom: 0;
+  width: 100%;
+}
+#dashboardWrapper.down{
+  bottom: -285px;
+}
+
 #dock{
   position: absolute;
   height: 40px;
   width: 100%;
   bottom: 0px;
-  margin-bottom: 0px;
-  padding-bottom: 0px;
   background: #000;
 }
 
-#dock .universe-button{
-  height:17px;
+#dock #buttons{
+  margin-top:2.5px;
+}
+#dock #startButton{
+  border-left: 1px solid #FFF;
+  border-right: 1px solid #FFF;
+  padding-right: 10px;
+  padding-left: 7px;
+  height: 30px;
+  display: inline-block;
+  margin: 0 10px 0 9px;
 }
 
 #dockRight{
   position: absolute;
   width: 300px;
-  margin-top: -33px;
+  margin-top: -35px;
   right: 0;
 }
 
