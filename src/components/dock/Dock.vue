@@ -39,9 +39,12 @@
         </span>
         <i class="icon white-logout" @click="logout"></i>
       </div>
-      <div class="pull-right" id="dockRight">
-        <a v-if="auth" title="search something" id="searchTrigger" @click="showSearch"><span class="icon white-search"></span></a>
-        <a v-if="auth" title="settings" id="settingsTrigger" @click="showSettings"><span class="icon white-gear"></span></a>
+      <div class="dockRight pull-right" v-if="auth">
+        <a title="search something" id="searchTrigger" @click="showSearch"><span class="icon white-search"></span></a>
+        <a title="settings" id="settingsTrigger" @click="showSettings"><span class="icon white-gear"></span></a>
+        <div id="clock" v-html="dateTime"></div>
+      </div>
+      <div  class="dockRight pull-right loggedOut" v-if="!auth">
         <div id="clock" v-html="dateTime"></div>
       </div>
     </div>
@@ -189,6 +192,10 @@ export default {
   background: #000;
 }
 
+#dock .icon{
+  cursor:pointer;
+}
+
 #dock #buttons{
   margin-top:2.5px;
 }
@@ -202,19 +209,23 @@ export default {
   margin: 0 10px 0 9px;
 }
 
-#dockRight{
+.dockRight{
   position: absolute;
   width: 300px;
   margin-top: -35px;
   right: 0;
 }
 
-#dockRight>*{
+.dockRight.loggedOut{
+  margin-top:0;
+}
+
+.dockRight>*{
   float: right;
   margin-right: 15px;
 }
 
-#dockRight #clock{
+.dockRight #clock{
   color:#FFF;
   margin-right:15px;
   margin-top: 6px;
