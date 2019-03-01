@@ -21,9 +21,9 @@ export default {
     mounted() {
         this.isActive = this.selected;
         let self = this;
-          this.$watch('selected', selected => {
-            this.$parent.selectTab(this);
-          }, {immediate:true})
+        this.$watch('selected', selected => {
+          this.$parent.selectTab(this);
+        }, {immediate:true})
     },
 }
 </script>
