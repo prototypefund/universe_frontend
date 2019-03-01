@@ -48,7 +48,7 @@ var user = function(){
     }
     this.getInfo = function(userid){
       return new Promise((resolve, reject)=>{
-          api.get('user/getInfo/'+userid,{},function(err,result,body){
+          api.get('user/getUserInfo/'+userid,{},function(err,result,body){
             if(err){
               reject(err);
             }
