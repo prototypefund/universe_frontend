@@ -16,21 +16,6 @@ var user = function(){
           });
       })
     }
-    //should be deleted same as request.delete
-    this.deleteFriendRequest = function(request_id){
-      return new Promise((resolve, reject)=>{
-        api.post('requests/delete',{
-            request_id:request_id
-          },function(err,result,body){
-            if(err){
-              reject(err);
-            }
-            else{
-              resolve(body);
-            }
-          });
-      })
-    }
     this.setConfig = function(index, value){
       return new Promise((resolve, reject)=>{
           api.post('user/setConfig',{
