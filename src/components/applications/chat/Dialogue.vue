@@ -12,7 +12,7 @@
           </ul>
         </div>
         <footer>
-          <form v-on:submit.prevent="submit">
+          <form v-on:submit.prevent="submit" autocomplete="off">
             <input type="text" placeholder="type a message..." name="message" class="input border-radius chatInput pull-right" style="" v-model="message">
           </form>
         </footer>
