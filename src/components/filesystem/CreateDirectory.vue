@@ -5,8 +5,7 @@
         <input type="text" placeholder="Title" v-model="name">
       </div>
       <div class="row">
-        <label>Privacy</label>
-        <input type="text" placeholder="Privacy" v-model="privacy">
+        <PrivacySelector :privacy="privacy"></PrivacySelector>
       </div>
       <div class="row">
         <UniverseButton text="Create Directory" :click="submit" style="float: right;"></UniverseButton>
@@ -16,13 +15,15 @@
 
 <script>
 import UniverseButton from '@/components/gui/UniverseButton'
+import PrivacySelector from '@/components/gui/PrivacySelector'
 import api from '@/utils/api'
-import { modalBus, applicationBus } from '../../main';
+import { modalBus, applicationBus,alertBus } from '../../main';
 
 export default {
   name: 'CreateDirectory',
   components:{
-    UniverseButton
+    UniverseButton,
+    PrivacySelector
   },
   
   props: ['data'],
@@ -43,10 +44,14 @@ export default {
         privacy:this.privacy
         },function(err){
           if(err){
-            console.log(err);
+            alertBus.$emit('alert', {
+              text:err.error
+            });
           }
           else{
-            alert('The folder was created!');
+            alertBus.$emit('alert', {
+              text:'The folder was created!'
+            });
             modalBus.$emit('modal', {
 
             });
