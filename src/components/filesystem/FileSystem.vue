@@ -53,11 +53,14 @@ export default {
     }
   },
   mounted: function(){
+    let self = this;
     applicationBus.$on('filesystem_1', (applicationObj) => {
         console.log('filesystem updated!');
         console.log(applicationObj);
-        this.directory_id = applicationObj.directory_id;
-        this.collection_id = applicationObj.collection_id;
+        if(applicationObj.directory_id)
+          self.directory_id = applicationObj.directory_id;
+        if(applicationObj.collection_id)
+          self.collection_id = applicationObj.collection_id;
     });
   }
 }
