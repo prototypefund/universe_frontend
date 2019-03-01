@@ -15,6 +15,7 @@
 
 import { alertBus } from '../../main';
 import user from '@/utils/user'
+import request from '@/utils/request'
 import buddylist from '@/utils/buddylist'
 import UniverseButton from '@/components/gui/UniverseButton'
 import UserPicture from '@/components/gui/UserPicture'
@@ -81,17 +82,13 @@ export default {
           self.denyButton = {
               text:'delete',
               callback:()=>{
-                user.deleteFriendRequest(self.notification.id)
+                request.delete(self.notification.id)
                 .then((result)=>{
                           alertBus.$emit('alert', {
                             text:'Friendrequest deleted'
                           });
+                          self.hide();
                 })
-                .catch((e)=>{
-                          alertBus.$emit('alert', {
-                            text:'There was an error deleting the friend request'
-                          });
-                });
               }
           }
 
