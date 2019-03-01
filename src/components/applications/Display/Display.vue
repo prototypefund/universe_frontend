@@ -27,9 +27,6 @@
               <showItem :item="display_tab.item"></showItem>
 
             </tab>
-            <!--<tab name="whazzup">
-                <h1>What what whaaat?!</h1>
-            </tab>-->
         </tabs>
     </div>
 </template>

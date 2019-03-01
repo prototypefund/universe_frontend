@@ -31,7 +31,7 @@ import FileSystem from '@/components/filesystem/FileSystem'
 import Settings from '@/components/applications/Settings'
 import Buddylist from '@/components/applications/Buddylist'
 import Display from '@/components/applications/Display/Display'
-import Chat from '@/components/applications/Chat'
+import Chat from '@/components/applications/chat/Chat'
 
 
 import Modal from '@/components/gui/Modal'
