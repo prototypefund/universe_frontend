@@ -57,6 +57,11 @@ export default {
 .buddylist ul{
   width:100%;
 }
+
+.buddylist ul li{
+  clear:both;
+}
+
 .buddylist ul li div{
   float:left;
   margin:5px;
