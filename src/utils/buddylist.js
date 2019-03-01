@@ -72,7 +72,6 @@ var buddylist = function(){
     	return new Promise((resolve, reject)=>{
 	    	this.get()
 	    	.then((buddylistFile)=>{
-	    		console.log(buddylistFile)
 	    		let buddylist = buddylistFile.buddylist
 	    		let buddylistArray
 	    		if(!buddylist)
@@ -80,40 +79,41 @@ var buddylist = function(){
 	    		else
 	    			buddylistArray = buddylist
 
-	    		buddylistArray.push({
-	    			id:userid,
-	    			username:'karl'
-	    		})
-	    		console.log(buddylistArray)
-	    		console.log('buddylist 213123');
-	    		console.log(buddylist);
-	    		if(typeof buddylist == 'undefined'){
-	    			self.create(buddylistArray).then(()=>{
+                user.getInfo(userid)
+                .then(function(info){
+                  
+                    console.log('GOT INFO!');
+                    console.log(info);
+                    buddylistArray.push({
+                        id:userid,
+                        username:info.username
+                    })
 
-	    				request.delete(requestObj.id)
-	    				.then(resolve)
-	    				.catch(reject)
-	    			})
-	    			.catch(reject)
-	    		}else{
-	    			console.log('updating buddylist');
-	    			self.update({
-	    				file:buddylistFile.file,
-	    				buddylist:buddylistArray
-	    			}).then((res)=>{
-	    				request.delete(requestObj.id)
-	    				.then((data)=>{
-	    					console.log('request deleted:');
-	    					console.log(data);
-	    					resolve(data);
-	    				})
-	    				.catch((e)=>{
-	    					console.log('error deleting request:');
-	    					console.log(e)
-	    					reject(e)
-	    				})
-	    			})
-	    		}
+                    if(typeof buddylist == 'undefined'){
+                        self.create(buddylistArray).then(()=>{
+
+                            request.delete(requestObj.id)
+                            .then(resolve)
+                            .catch(reject)
+                        })
+                        .catch(reject)
+                    }else{
+                        self.update({
+                            file:buddylistFile.file,
+                            buddylist:buddylistArray
+                        }).then((res)=>{
+                            request.delete(requestObj.id)
+                            .then((data)=>{
+                                resolve(data);
+                            })
+                            .catch((e)=>{
+                                reject(e)
+                            })
+                        })
+                    }
+
+                });
+	    		
 
 	    		
 	    	})

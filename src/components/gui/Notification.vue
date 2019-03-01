@@ -55,45 +55,49 @@ export default {
     if(this.type == 'request'){
       this.text = this.notification;
       if(this.notification.type == 'buddy'){
-        this.userid = this.notification.user_b;
-        this.text = this.notification.user_b+' wants to be your buddy';
-        this.acceptButton = {
-            text:'accept',
-            callback:()=>{
-              buddylist.addBuddy(this.notification)
-          .then(()=>{
-                  alertBus.$emit('alert', {
-                    text:'Friendrequest accepted'
-                  });
-                  self.hide();
-          })
-          .catch((e)=>{
-                  alertBus.$emit('alert', {
-                    text:'There was an error accepting the friend request'
-                  });
-                  self.hide();
+        let self = this;
+        user.getInfo(this.notification.user_b)
+        .then(function(info){
+          self.userid = self.notification.user_b;
+          self.text = info.username+' wants to be your buddy';
+          self.acceptButton = {
+              text:'accept',
+              callback:()=>{
+                buddylist.addBuddy(self.notification)
+                .then(()=>{
+                        alertBus.$emit('alert', {
+                          text:'Friendrequest accepted'
+                        });
+                        self.hide();
+                })
+                .catch((e)=>{
+                        alertBus.$emit('alert', {
+                          text:'There was an error accepting the friend request'
+                        });
+                        self.hide();
+                });
+              }
+          },
+          self.denyButton = {
+              text:'delete',
+              callback:()=>{
+                user.deleteFriendRequest(self.notification.id)
+                .then((result)=>{
+                          alertBus.$emit('alert', {
+                            text:'Friendrequest deleted'
+                          });
+                })
+                .catch((e)=>{
+                          alertBus.$emit('alert', {
+                            text:'There was an error deleting the friend request'
+                          });
+                });
+              }
+          }
 
-          });
-            }
-        },
-        this.denyButton = {
-            text:'delete',
-            callback:()=>{
-              user.deleteFriendRequest(this.notification.id)
-          .then((result)=>{
-                    alertBus.$emit('alert', {
-                      text:'Friendrequest deleted'
-                    });
-          })
-          .catch((e)=>{
-                    alertBus.$emit('alert', {
-                      text:'There was an error deleting the friend request'
-                    });
-
-          });
-            }
-        }
+        });
       }
+
     }
   },
 
