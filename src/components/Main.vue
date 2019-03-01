@@ -67,22 +67,24 @@ export default {
                 title:'Files',
                 component:FileSystem,
                 style:{
-                  width:6,
-                  height:2,
-                  left:1,
-                  top:0.5
+                  width:4.5,
+                  height:1.5,
+                  left:6.5,
+                  top:1.5
                 }
               }
 
       }
       if(authorized){
+        this.applications.files.style.left = 0.1;
+        this.applications.files.style.top = 0.1;
         this.applications.settings = {
           title:'Settings',
           component:Settings,
           style:{
             hidden:true,
-            width:6,
-            height:2,
+            width:4.5,
+            height:3,
             left:2,
             top:1
           }
@@ -103,10 +105,10 @@ export default {
             title:'Display',
             component:Display,
             style:{
-              width:6,
+              width:8,
               height:2,
-              left:2,
-              top:1
+              left:0.3,
+              top:1.7
             }
           };
 
@@ -114,10 +116,10 @@ export default {
             title:'Chat',
             component:Chat,
             style:{
-              width:3,
-              height:1,
-              left:3,
-              top:2
+              width:4,
+              height:1.5,
+              left:4.8,
+              top:0.1
             }
           };
       }
