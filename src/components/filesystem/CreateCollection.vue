@@ -6,7 +6,7 @@
       </div>
       <div class="row">
         <label>Privacy</label>
-        <input type="text" placeholder="Privacy" v-model="privacy">
+        <PrivacySelector :privacy="privacy"></PrivacySelector>
       </div>
       <div class="row">
         <label>Info</label>
@@ -20,13 +20,15 @@
 
 <script>
 import UniverseButton from '@/components/gui/UniverseButton'
+import PrivacySelector from '@/components/gui/PrivacySelector'
 import api from '@/utils/api'
 import { modalBus, applicationBus } from '../../main';
 
 export default {
   name: 'CreateCollection',
   components:{
-    UniverseButton
+    UniverseButton,
+    PrivacySelector
   },
   
   props: ['data'],
@@ -34,7 +36,7 @@ export default {
   data () {
     return {
       name:'',
-      privacy:'',
+      privacy:'p',
       info:'',
       filesystemBus:{}
     }
