@@ -5,29 +5,29 @@ import request from '@/utils/request'
 
 var buddylist = function(){
 	this.create = function(buddylistArray){
-	  console.log(buddylistArray);
-	  console.log(localStorage.passwordHash);
-	  //let key = Uint8Array.from(atob(localStorage.passwordHash), c => c.charCodeAt(0));
-	  let encryptedFile = cry.symEncrypt(buddylistArray, localStorage.passwordHash);
+    return new Promise((resolve,reject)=>{
+      //let key = Uint8Array.from(atob(localStorage.passwordHash), c => c.charCodeAt(0));
+      let encryptedFile = cry.symEncrypt(buddylistArray, localStorage.passwordHash);
       var file = new File([encryptedFile], "buddylist.json", {
         type: "text/json",
       });
       api.postFile('files/upload', {
-      	collection_id:'_USERCONFIG',
-      	privacy:'h'
+        collection_id:'_USERCONFIG',
+        privacy:'h'
       }, file, function(err, result){
-      	console.log(result);
-      	user.setConfig('buddylist_file',result.id)
-      	.then(function(res){
-      		console.log(result)
-      	})
-      	.catch(function(e){
-
-      	});
+        console.log(result);
+        user.setConfig('buddylist_file',result.id)
+        .then(function(res){
+          resolve(result)
+        })
+        .catch(reject);
       })
+    })
 	};
 	this.update = function(buddylistObj){
 	  let buddylistArray = buddylistObj.buddylist
+
+    console.log('updating file!', buddylistArray);
 	  //return alert('UPDATE NOW!');
  	  //let key = Uint8Array.from(atob(localStorage.passwordHash), c => c.charCodeAt(0));
 	  let encryptedFile = cry.symEncrypt(buddylistArray, localStorage.passwordHash);
@@ -39,6 +39,8 @@ var buddylist = function(){
 	      api.postFile('files/update', {
 	      	file_id:buddylistObj.file.id,
 	      }, file, function(err, result){
+          console.log('got result!');
+          console.log(result);
 	      	if(err)
 	      		reject(err)
 	      	else
@@ -72,6 +74,10 @@ var buddylist = function(){
     	return new Promise((resolve, reject)=>{
 	    	this.get()
 	    	.then((buddylistFile)=>{
+
+          console.log('got buddylistfile');
+          console.log(buddylistFile);
+
 	    		let buddylist = buddylistFile.buddylist
 	    		let buddylistArray
 	    		if(!buddylist)
@@ -83,15 +89,19 @@ var buddylist = function(){
                 .then(function(info){
                   
                     console.log('GOT INFO!');
-                    console.log(info);
+                    console.log(JSON.stringify(info));
+                    console.log(info.username);
+                    console.log('asd');
+                    console.log(buddylistArray);
                     buddylistArray.push({
                         id:userid,
                         username:info.username
-                    })
-
-                    if(typeof buddylist == 'undefined'){
+                    });
+                    console.log(buddylistArray);
+                    console.log(1337);
+                    console.log(typeof buddylist);
+                    if(typeof buddylist == undefined){
                         self.create(buddylistArray).then(()=>{
-
                             request.delete(requestObj.id)
                             .then(resolve)
                             .catch(reject)
