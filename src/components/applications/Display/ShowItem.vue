@@ -56,6 +56,11 @@ export default {
         console.log('opening file!');
         let content;
         switch(result.file.filename.split('.').pop()){
+          case 'pdf':
+            alert('ole ole ole');
+            this.contentType = 'HTMLContent';
+            content = '<iframe id="contentFrame" type="application/pdf" src="'+window.URL.createObjectURL(new Blob([result.filecontent], {type: "application/pdf"}))+'"></iframe>';
+            break;
           case 'txt':
             this.contentType = 'HTMLContent';
             content = result.filecontent;
@@ -134,6 +139,14 @@ export default {
     bottom:0;
     left:0;
     background:#c9c9c9;
+}
+
+#contentFrame{
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
 }
 
 .itemBrowser pre{
