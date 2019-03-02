@@ -208,6 +208,7 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
+    overflow: auto;
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px;
 }
