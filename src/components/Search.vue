@@ -16,13 +16,13 @@
     </ul>
     <input type="text" placeholder="search" id="searchField" v-model="query">
     <span class="icon blue-search"></span>
-    <a href="#" id="openInTelescope" style="line-height: 40px;margin-left: 3px"><span class="icon white-search" style="margin-bottom: -8px;"></span>&nbsp;Open in Telescope</a>
+    <!--<a href="#" id="openInTelescope" style="line-height: 40px;margin-left: 3px"><span class="icon white-search" style="margin-bottom: -8px;"></span>&nbsp;Open in Telescope</a>-->
   </header>
        <div id="loadingArea">
           <div class="listContainer" v-if="results.users">
              <header>Users</header>
              <ul class="list resultList">
-                <container v-for="user, index in results.users" :key="user.id">;
+                <div v-for="user, index in results.users" :key="user.id">
                     <li>
                        <userPicture :userid="user.id" size="30"></userPicture>
                        <a>{{user.name}}</a>
@@ -35,7 +35,7 @@
                           <li @click="sendFriendRequest(user.id)"><span class="icon blue-plus"></span>Add User</li>
                        </ul>
                     </li>
-                </container>
+                </div>
              </ul>
              <div class="loadAll" data-type="users"><a href="#">show all</a></div>
           </div>
@@ -240,8 +240,8 @@ span.icon.blue-chevron-down {
     margin-left: 265px;
 }
 
-#searchMenu .userPicture {
-  margin: 1px 5px;
+#searchMenu .userpicture {
+  margin: 5px 5px;
 }
 
 .suggestionList:empty,

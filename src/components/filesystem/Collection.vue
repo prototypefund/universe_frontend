@@ -83,6 +83,7 @@ export default {
   props:['collection'],
   watch: {
     collection: function (collection_id) {
+      console.log('whalla whalla');
       this.openCollection(collection_id);
     }
   },
@@ -104,7 +105,7 @@ export default {
       this.filesystemBus.directory_id = -1;
       this.filesystemBus.collection_id = id;
       applicationBus.$emit('filesystem_1', this.filesystemBus)
-
+      this.openCollectionOnBusUpdate = true;
       let self = this;
       this.getItems(id,function(result){
         self.name = result.info.name;
@@ -147,9 +148,10 @@ export default {
     applicationBus.$on('filesystem_1', (applicationObj) => {
         self.filesystemBus = applicationObj;
         
-        console.log('UPDATE!');
-        if(self.openCollectionOnBusUpdate && applicationObj.collection_id>-1)
+        if(self.openCollectionOnBusUpdate && applicationObj.collection_id>-1){
+          console.log('NOW')
           self.openCollection(applicationObj.collection_id);
+        }
     });
     authBus.$on('auth', (authObj) => {
         if(typeof authObj.jwt != 'undefined'){

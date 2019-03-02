@@ -16,7 +16,7 @@
     <div id="dashboardWrapper" :class="{ 'down': !showDashboard }">
       <Dashboard></Dashboard>
     </div>
-    <ul>
+    <ul id="notifications">
       <li v-for="notification in openRequests">
         <notification :notification="notification" type="request"></notification>
       </li>
@@ -248,5 +248,10 @@ export default {
     font-size: 16px;
     margin-bottom: 15px;
     border: none;
+}
+
+#notifications{
+    position: absolute;
+    bottom: 40px;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <input type="text" v-model="value">
+    <input type="hidden" v-model="value">
 
     <div class="privacySettings">
             <header>Privacy settings</header>
@@ -41,6 +41,7 @@ export default {
 <style scoped>
 .privacySettings {
      color: #313131;
+     margin-bottom: 15px;
 }
  .privacySettings h1, .privacySettings h2, .privacySettings h3{
      margin: 0;

@@ -5,8 +5,7 @@
         <input type="text" placeholder="Title" v-model="collection_id">
       </div>
       <div class="row">
-        <label>Privacy</label>
-        <input type="text" placeholder="Privacy" v-model="privacy">
+        <PrivacySelector :privacy="privacy"></PrivacySelector>
       </div>
 
       <vue2Dropzone ref="uploadDropzone" id="dropzone" :options="dropzoneOptions" v-on:vdropzone-file-added="prepareTempFile" v-on:vdropzone-success="onUploadSuccess"></vue2Dropzone>
@@ -21,6 +20,7 @@
 import vue2Dropzone from 'vue2-dropzone'
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 import UniverseButton from '@/components/gui/UniverseButton'
+import PrivacySelector from '@/components/gui/PrivacySelector'
 import api from '@/utils/api'
 import { authBus, modalBus, applicationBus } from '../../main';
 
@@ -47,6 +47,7 @@ export default {
   },
   components:{
     UniverseButton,
+    PrivacySelector,
     vue2Dropzone
   },
   props: ['data'],
@@ -97,6 +98,11 @@ export default {
               modalBus.$emit('modal', {});
 
               //update collection
+              self.filesystemBus.collection_id = -1;
+              applicationBus.$emit('filesystem_1', self.filesystemBus);
+              //update collection
+
+              self.filesystemBus.collection_id = self.collection_id;
               self.filesystemBus.collection_id = self.collection_id;
               applicationBus.$emit('filesystem_1', self.filesystemBus);
             }

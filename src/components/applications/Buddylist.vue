@@ -10,7 +10,7 @@
           </div>
           <div class="buttons">
             <a href="#" onclick="User.showProfile(buddy.id); return false" title="open Profile"><span class="icon icon-user"></span></a>
-            <a href="#" onclick="im.openDialogue('tusk'); return false" title="write Message"><span class="icon icon-envelope"></span></a>
+            <a href="#" @click="openChat(buddy.id)" title="write Message"><span class="icon icon-envelope"></span></a>
             <!--<a href="#" onclick="settings.showUpdateBuddylistForm(); return false" title="write Message"><span class="icon dark-gear"></span></a>-->
           </div>
         </li>
@@ -18,12 +18,15 @@
     </div>
 </template>
 <script>
+import {applicationBus} from '@/main'
+
 import UniverseButton from '@/components/gui/UniverseButton'
 import UserPicture from '@/components/gui/UserPicture'
 import buddylist from '@/utils/buddylist'
 
 export default {
   name: 'Buddylist',
+
   components:{
     UniverseButton,
     UserPicture
@@ -34,14 +37,19 @@ export default {
     }
   },
   methods:{
-    submit:function(){
-      
+    openChat:function(buddy){
+      let action = {
+        type:'openChat',
+        data:{userid:buddy}
+      }
+      applicationBus.$emit('chat', action);
     }
   },
   created:function(){
     buddylist.get().then((buddylist)=>{
         this.buddies = buddylist.buddylist;
     });
+
   }
 }
 </script>
@@ -49,6 +57,11 @@ export default {
 .buddylist ul{
   width:100%;
 }
+
+.buddylist ul li{
+  clear:both;
+}
+
 .buddylist ul li div{
   float:left;
   margin:5px;

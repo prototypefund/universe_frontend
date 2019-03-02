@@ -5,15 +5,14 @@
         <input type="text" placeholder="Title" v-model="name">
       </div>
       <div class="row">
-        <label>Privacy</label>
-        <PrivacySelector :privacy="privacy"></PrivacySelector>
-      </div>
-      <div class="row">
         <label>Info</label>
         <input type="text" placeholder="info" v-model="info">
       </div>
       <div class="row">
-        <UniverseButton text="Create Directory" :click="submit" style="float: right;"></UniverseButton>
+        <PrivacySelector :privacy="privacy"></PrivacySelector>
+      </div>
+      <div class="row">
+        <UniverseButton text="Create Collection" :click="submit" style="float: right;"></UniverseButton>
       </div>
     </form>
 </template>
