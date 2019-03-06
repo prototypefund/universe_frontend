@@ -1,5 +1,9 @@
 image: node:8.12.0
-all_tests:
+build:
   script:
    - npm install
    - npm run build
+  artifacts:
+    name: "dist"
+    paths:
+      - build/
