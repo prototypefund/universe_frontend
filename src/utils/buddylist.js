@@ -74,29 +74,20 @@ var buddylist = function(){
     	return new Promise((resolve, reject)=>{
 	    	this.get()
 	    	.then((buddylistFile)=>{
-
-
-              console.log(buddylistFile);
-          //get username
           user.getInfo(userid)
           .then((info)=>{
               let UserEntry = {
                 id:userid,
                 username:info.username
               };
-
-
               //check if buddylistfile exists
               if(!buddylistFile){
                 //create new buddylist
-                console.log('create new buddylist now!',UserEntry);
-
                 self.create([UserEntry]).then(()=>{
                     request.delete(requestObj.id)
                     .then(resolve)
                     .catch(reject)
                 })
-
               }else{
                 buddylistFile.buddylist.push(UserEntry);
                 //update existing buddylist
