@@ -36,6 +36,7 @@ var buddylist = function(){
         type: "text/json",
       });
       return new Promise((resolve, reject)=>{
+        console.log(buddylistObj);
 	      api.postFile('files/update', {
 	      	file_id:buddylistObj.file.id,
 	      }, file, function(err, result){
@@ -57,7 +58,6 @@ var buddylist = function(){
 	            else{
 	              if(body){
 		  			  let decryptedFile = cry.symDecrypt(body.filecontent, localStorage.passwordHash);
-		  			  
 		              resolve({
 		              	file:body.file,
 		              	buddylist:decryptedFile
@@ -75,56 +75,46 @@ var buddylist = function(){
 	    	this.get()
 	    	.then((buddylistFile)=>{
 
-          console.log('got buddylistfile');
-          console.log(buddylistFile);
 
-	    		let buddylist = buddylistFile.buddylist
-	    		let buddylistArray
-	    		if(!buddylist)
-	    			buddylistArray = [];
-	    		else
-	    			buddylistArray = buddylist
+              console.log(buddylistFile);
+          //get username
+          user.getInfo(userid)
+          .then((info)=>{
+              let UserEntry = {
+                id:userid,
+                username:info.username
+              };
 
-                user.getInfo(userid)
-                .then(function(info){
-                  
-                    console.log('GOT INFO!');
-                    console.log(JSON.stringify(info));
-                    console.log(info.username);
-                    console.log('asd');
-                    console.log(buddylistArray);
-                    buddylistArray.push({
-                        id:userid,
-                        username:info.username
-                    });
-                    console.log(buddylistArray);
-                    console.log(1337);
-                    console.log(typeof buddylist);
-                    if(typeof buddylist == undefined){
-                        self.create(buddylistArray).then(()=>{
-                            request.delete(requestObj.id)
-                            .then(resolve)
-                            .catch(reject)
-                        })
-                        .catch(reject)
-                    }else{
-                        self.update({
-                            file:buddylistFile.file,
-                            buddylist:buddylistArray
-                        }).then((res)=>{
-                            request.delete(requestObj.id)
-                            .then((data)=>{
-                                resolve(data);
-                            })
-                            .catch((e)=>{
-                                reject(e)
-                            })
-                        })
-                    }
 
-                });
-	    		
+              //check if buddylistfile exists
+              if(!buddylistFile){
+                //create new buddylist
+                console.log('create new buddylist now!',UserEntry);
 
+                self.create([UserEntry]).then(()=>{
+                    request.delete(requestObj.id)
+                    .then(resolve)
+                    .catch(reject)
+                })
+
+              }else{
+                buddylistFile.buddylist.push(UserEntry);
+                //update existing buddylist
+                console.log('update buddylist now!',UserEntry);
+                self.update({
+                  file:buddylistFile.file,
+                  buddylist:buddylistFile.buddylist
+                }).then((res)=>{
+                  request.delete(requestObj.id)
+                  .then((data)=>{
+                      resolve(data);
+                  })
+                  .catch((e)=>{
+                      reject(e)
+                  })
+                })
+              }
+          });
 	    		
 	    	})
 	    	.catch(reject);
