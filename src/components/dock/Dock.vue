@@ -117,6 +117,7 @@ export default {
                 });
                 localStorage.setItem('jwt',body.jwt);
                 localStorage.setItem('userid',body.user.id);
+                localStorage.setItem('password',self.password);
                 localStorage.setItem('passwordHash',passwordHash);
                 window.location.reload();
                 self.auth = true;
