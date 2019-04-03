@@ -25,18 +25,13 @@ var cry = function(){
     this.symDecrypt = function(encrypted, key){
       let keyHash = this.hash(key,'');
       keyHash = keyHash.slice(0, 32);
-      console.log(keyHash);
-
       const messageWithNonceAsUint8Array = decodeBase64(encrypted);
-      console.log(messageWithNonceAsUint8Array);
       const nonce = messageWithNonceAsUint8Array.slice(0, nacl.secretbox.nonceLength);
       const message = messageWithNonceAsUint8Array.slice(
         nacl.secretbox.nonceLength,
         encrypted.length
       );
-
       const decrypted = nacl.secretbox.open(message, nonce, keyHash);
-
       if (!decrypted) {
         throw new Error("Could not decrypt message");
       }
@@ -44,6 +39,40 @@ var cry = function(){
       const base64DecryptedMessage = encodeUTF8(decrypted);
       return JSON.parse(base64DecryptedMessage);
     };
+
+    this.asymEncrypt = function(json, pubKeyReceiver, secretKeySender){
+      console.log('asymEncrypt');
+      console.log(json, pubKeyReceiver, secretKeySender);
+        const newNonce = () => nacl.randomBytes(nacl.secretbox.nonceLength);
+
+        const nonce = newNonce();
+        const messageUint8 = decodeUTF8(JSON.stringify(json));
+        const box = nacl.box(messageUint8, nonce, pubKeyReceiver, secretKeySender);
+
+        const fullMessage = new Uint8Array(nonce.length + box.length);
+        fullMessage.set(nonce);
+        fullMessage.set(box, nonce.length);
+        const base64FullMessage = encodeBase64(fullMessage);
+        return base64FullMessage;
+    };
+    this.asymDecrypt = function(encrypted, senderPublicKey, receiverSecretKey){
+
+      const messageWithNonceAsUint8Array = decodeBase64(encrypted);
+      const nonce = messageWithNonceAsUint8Array.slice(0, nacl.secretbox.nonceLength);
+      const message = messageWithNonceAsUint8Array.slice(
+        nacl.secretbox.nonceLength,
+        encrypted.length
+      );
+
+      const plaintext = nacl.box.open(message,
+       nonce,
+        senderPublicKey, 
+        receiverSecretKey)
+
+      const base64DecryptedMessage = encodeUTF8(plaintext);
+      return JSON.parse(base64DecryptedMessage);
+    }
+
     //password is used to encrypt secretKey
     this.generateUserKeys = function(password){
 
@@ -68,7 +97,6 @@ var cry = function(){
     this.test = function(){
         const keyAlice = nacl.box.keyPair();
         const keyBob = nacl.box.keyPair();
-        console.log(nacl);
 
         const newNonce = () => nacl.randomBytes(nacl.secretbox.nonceLength);
 
@@ -90,6 +118,8 @@ var cry = function(){
       return nacl.hash(decodeUTF8(string+salt));
 
     };
+    this.encodeBase64 = encodeBase64;
+    this.decodeBase64 = decodeBase64;
 }
 
 export default new cry();
