@@ -22,6 +22,66 @@
 
 
 import user from '@/utils/user'
+import cry from '@/utils/crypto'
+import api from '@/utils/api'
+
+
+let im = new function(){
+  this.getKey = function(userid){
+    return new Promise((resolve,reject)=>{
+      api.get('user/'+userid+'/getKey',{},function(err,result,body){
+        if(err){
+          reject(err);
+        }
+        resolve(body)
+      });
+    });
+  }
+  this.getMessages = function(userid){
+    return new Promise((resolve,reject)=>{
+      api.get('user/'+userid+'/getMessages',{},function(err,result,body){
+        if(err){
+          reject(err);
+        }
+        resolve(body)
+      });
+    });
+  }
+  this.sendMessage = function(user, message){
+    return new Promise((resolve,reject)=>{
+
+      //get receiver key
+      im.getKey(user.id)
+      .then((receiverKey)=>{
+
+        im.getKey(localStorage.userid)
+        .then((senderKey)=>{
+          //decrypt sender secret key and transform to 8 bit unsigned int
+          let senderSecretKey = Uint8Array.from(Object.values(cry.symDecrypt(senderKey.secret_key, localStorage.password)));
+
+          //encrypt message and transform to base64
+          let encryptedMessage = cry.asymEncrypt(message,cry.decodeBase64(receiverKey.public_key), senderSecretKey);
+
+          api.post('user/'+user.id+'/sendMessage',{message:encryptedMessage},function(err,result,body){
+            if(err){
+              reject(err);
+            }
+            resolve(body)
+          });
+
+        }).catch((e)=>{
+
+        });
+
+      })
+      .catch((e)=>{
+
+      });
+
+    });
+  }
+}
+
 
 export default {
   name: 'Dialogue',
@@ -35,14 +95,57 @@ export default {
   },
   props:['user'],
   methods:{
+    loadMessages:function(){
+
+      //get receiver key
+      im.getKey(localStorage.userid)
+      .then((receiverKey)=>{
+
+        im.getKey(this.user.id)
+        .then((senderKey)=>{
+
+          //decrypt sender secret key and transform to 8 bit unsigned int
+          let receiverSecretKey = Uint8Array.from(Object.values(cry.symDecrypt(receiverKey.secret_key, localStorage.password)));
+
+          console.log('receiverSecretKey');
+          console.log(receiverSecretKey);
+
+          im.getMessages(this.user.id)
+          .then((result)=>{
+            console.log('['+result.filecontent.slice(0,-1)+']');
+            let decryptedMessages = JSON.parse('['+result.filecontent.slice(0,-2)+']');
+            for(let i in decryptedMessages){
+              console.log(decryptedMessages[i])
+              let plaintext = cry.asymDecrypt(decryptedMessages[i], cry.decodeBase64(senderKey.public_key), receiverSecretKey);
+              console.log(plaintext);
+            }
+          });
+        })
+        .catch((e)=>{
+
+        });
+      });
+    },
     submit:function(e){
+
+      im.sendMessage(this.user, this.message)
+      .then(function(result){
+        console.log(result);
+      })
+      .catch(function(error){
+        console.log(error)
+      });
+        /*
+        cry.test()
+
+
         e.preventDefault();
         this.messages.push(this.message);
-        this.message = '';
+        this.message = '';*/
     }
   },
   created:function(){
-
+    this.loadMessages();
   }
 }
 </script>
