@@ -60,9 +60,14 @@ let im = new function(){
           let senderSecretKey = Uint8Array.from(Object.values(cry.symDecrypt(senderKey.secret_key, localStorage.password)));
 
           //encrypt message and transform to base64
+          let encryptedMessageNew = cry.hybridEncrypt(message,cry.decodeBase64(receiverKey.public_key),cry.decodeBase64(senderKey.public_key), senderSecretKey);
+
+          console.log('hybrid encryption:');
+          console.log(encryptedMessageNew);
+
           let encryptedMessage = cry.asymEncrypt(message,cry.decodeBase64(receiverKey.public_key), senderSecretKey);
 
-          api.post('user/'+user.id+'/sendMessage',{message:encryptedMessage},function(err,result,body){
+          api.post('user/'+user.id+'/sendMessage',{message:encryptedMessageNew},function(err,result,body){
             if(err){
               reject(err);
             }
@@ -96,7 +101,7 @@ export default {
   props:['user'],
   methods:{
     loadMessages:function(){
-
+      let self = this;
       //get receiver key
       im.getKey(localStorage.userid)
       .then((receiverKey)=>{
@@ -113,11 +118,16 @@ export default {
           im.getMessages(this.user.id)
           .then((result)=>{
             console.log('['+result.filecontent.slice(0,-1)+']');
-            let decryptedMessages = JSON.parse('['+result.filecontent.slice(0,-2)+']');
-            for(let i in decryptedMessages){
-              console.log(decryptedMessages[i])
-              let plaintext = cry.asymDecrypt(decryptedMessages[i], cry.decodeBase64(senderKey.public_key), receiverSecretKey);
+            let encryptedMessages = JSON.parse('['+result.filecontent.slice(0,-2)+']');
+            for(let i in encryptedMessages){
+              console.log('decryptedMessages['+i+']');
+              let symEncrypted = encryptedMessages[i];
+              console.log(symEncrypted);
+              //here somewhere is the error=>
+              let plaintext = cry.hybridDecrypt(encryptedMessages[i], cry.decodeBase64(senderKey.public_key), [],receiverSecretKey);
+
               console.log(plaintext);
+              self.messages.push({message:plaintext});
             }
           });
         })

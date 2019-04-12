@@ -25,7 +25,12 @@ var cry = function(){
     this.symDecrypt = function(encrypted, key){
       let keyHash = this.hash(key,'');
       keyHash = keyHash.slice(0, 32);
-      const messageWithNonceAsUint8Array = decodeBase64(encrypted);
+      let messageWithNonceAsUint8Array;
+      if(typeof encrypted === 'string')
+        messageWithNonceAsUint8Array = decodeBase64(encrypted);
+      else
+
+        messageWithNonceAsUint8Array = encrypted;
       const nonce = messageWithNonceAsUint8Array.slice(0, nacl.secretbox.nonceLength);
       const message = messageWithNonceAsUint8Array.slice(
         nacl.secretbox.nonceLength,
@@ -41,8 +46,6 @@ var cry = function(){
     };
 
     this.asymEncrypt = function(json, pubKeyReceiver, secretKeySender){
-      console.log('asymEncrypt');
-      console.log(json, pubKeyReceiver, secretKeySender);
         const newNonce = () => nacl.randomBytes(nacl.secretbox.nonceLength);
 
         const nonce = newNonce();
@@ -56,7 +59,6 @@ var cry = function(){
         return base64FullMessage;
     };
     this.asymDecrypt = function(encrypted, senderPublicKey, receiverSecretKey){
-
       const messageWithNonceAsUint8Array = decodeBase64(encrypted);
       const nonce = messageWithNonceAsUint8Array.slice(0, nacl.secretbox.nonceLength);
       const message = messageWithNonceAsUint8Array.slice(
@@ -71,7 +73,54 @@ var cry = function(){
 
       const base64DecryptedMessage = encodeUTF8(plaintext);
       return JSON.parse(base64DecryptedMessage);
-    }
+    };
+
+    this.hybridEncrypt = function(json, pubKeyReceiver, pubKeySender, secretKeySender){
+      //@sec
+      //not sure if a key > 32bit makes sense here because of
+      //keyHash = keyHash.slice(0, 32);
+      const randomKey = nacl.randomBytes(128)
+
+      const encryptedJSON = this.symEncrypt(json, randomKey);
+      const encryptedRandomKeyReceiver = this.asymEncrypt(randomKey, pubKeyReceiver, secretKeySender);
+      const encryptedRandomKeySender = this.asymEncrypt(randomKey, pubKeySender, secretKeySender);
+
+      return encryptedRandomKeyReceiver+'\\n'+encryptedRandomKeySender+'\\n'+encryptedJSON;
+
+    };
+    this.hybridDecrypt = function(encrypted, senderPublicKey, receiverPublicKey, receiverSecretKey){
+
+      const parts = encrypted.split('\n');
+      const encrypedRandomKeyReceiver = parts[0];
+      let self = this;
+      let randomKey = false;
+
+      //try first with sender key (parts[0]) than with reciever key (parts[1])
+      try{
+        randomKey = self.asymDecrypt(parts[0], 
+          senderPublicKey,
+          receiverSecretKey);
+      }catch(e){
+        console.log(e);
+      }
+      if(!randomKey)
+      try{
+        randomKey = self.asymDecrypt(parts[1],
+          receiverPublicKey,
+          receiverSecretKey);
+      }catch(e){
+
+        console.log(e);
+      }
+
+      if(randomKey){
+        randomKey = Uint8Array.from(Object.values(randomKey));
+      }else
+        throw 'could not decrypt public key';
+      return self.symDecrypt(parts[2], randomKey);
+
+
+    };
 
     //password is used to encrypt secretKey
     this.generateUserKeys = function(password){
