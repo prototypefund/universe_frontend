@@ -187,6 +187,15 @@ export default {
   padding: 10px;
 }
 
+.directoryList{
+  position: absolute;
+  top: 46px;
+  bottom: 0;
+  overflow: auto;
+  right: 0;
+  left: 0;
+}
+
 header>.path{
     margin-top: 7px;
     display: block;
