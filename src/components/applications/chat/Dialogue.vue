@@ -59,11 +59,16 @@ let im = new function(){
           //decrypt sender secret key and transform to 8 bit unsigned int
           let senderSecretKey = Uint8Array.from(Object.values(cry.symDecrypt(senderKey.secret_key, localStorage.password)));
 
+          message = {
+            message:message,
+            author:localStorage.userid,
+            timestamp: new Date().toString()
+          }
+
+
           //encrypt message and transform to base64
           let encryptedMessageNew = cry.hybridEncrypt(message,cry.decodeBase64(receiverKey.public_key),cry.decodeBase64(senderKey.public_key), senderSecretKey);
 
-          console.log('hybrid encryption:');
-          console.log(encryptedMessageNew);
 
           let encryptedMessage = cry.asymEncrypt(message,cry.decodeBase64(receiverKey.public_key), senderSecretKey);
 
@@ -71,7 +76,7 @@ let im = new function(){
             if(err){
               reject(err);
             }
-            resolve(body)
+            resolve(message,body)
           });
 
         }).catch((e)=>{
@@ -127,7 +132,7 @@ export default {
               let plaintext = cry.hybridDecrypt(encryptedMessages[i], cry.decodeBase64(senderKey.public_key), [],receiverSecretKey);
 
               console.log(plaintext);
-              self.messages.push({message:plaintext});
+              self.messages.push(plaintext);
             }
           });
         })
@@ -137,21 +142,16 @@ export default {
       });
     },
     submit:function(e){
-
+      let self = this;
       im.sendMessage(this.user, this.message)
-      .then(function(result){
-        console.log(result);
+      .then(function(messageObj,result){
+        //push sent message to messages array
+        self.messages.push(messageObj);
+        self.message = '';
       })
       .catch(function(error){
         console.log(error)
       });
-        /*
-        cry.test()
-
-
-        e.preventDefault();
-        this.messages.push(this.message);
-        this.message = '';*/
     }
   },
   created:function(){
