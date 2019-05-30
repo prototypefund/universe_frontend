@@ -30,9 +30,9 @@
                         <span class="icon icon-gear dark"></span><span class="icon white-gear white"></span>
                        </a>
                     </li>
-                    <li class="searchContext" v-if="user.showSettings">
+                    <li class="searchContext" v-if="user.showSettings&&buddy_ids.indexOf(user.id)>1">
                        <ul>
-                          <li @click="sendFriendRequest(user.id)"><span class="icon blue-plus"></span>Add User</li>
+                          <li @click="sendFriendRequest(user.id)" v-if="buddy_ids.indexOf(user.id)>1"><span class="icon blue-plus"></span>Add User</li>
                        </ul>
                     </li>
                 </div>
@@ -48,6 +48,7 @@ import {alertBus} from '@/main';
 
 import UniverseButton from '@/components/gui/UniverseButton'
 import SettingsButton from '@/components/gui/SettingsButton'
+import buddylist from '@/utils/buddylist'
 import UserPicture from '@/components/gui/UserPicture'
 import api from '@/utils/api'
 import user from '@/utils/user'
@@ -65,13 +66,14 @@ export default {
       name:'',
       show:this.showsearch,
       query:'',
-      results:{}
+      results:{},
+      buddy_ids:[]
     }
   },
   watch: {
     showsearch: {
       handler: function(val) {
-  console.log(val);
+        console.log(val);
         this.show=val;
       },
       deep: true
@@ -124,6 +126,14 @@ export default {
     }
   },
   created:function(){
+    let self = this;
+    buddylist.get().then((buddylist)=>{
+      console.log(buddylist.buddylist);
+      for(let i in buddylist.buddylist){
+        console.log(buddylist.buddylist[i]);
+        self.$data.buddy_ids.push(buddylist.buddylist[i].id);
+      }
+    });
   }
 }
 
