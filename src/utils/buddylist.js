@@ -89,6 +89,15 @@ var buddylist = function(){
                     .catch(reject)
                 })
               }else{
+                //check if buddy already exists
+                for (let i in buddylistFile.buddylist){
+                  console.log(parseInt(buddylistFile.buddylist[i].id),parseInt(userid));
+                  if(parseInt(buddylistFile.buddylist[i].id) == parseInt(userid)){
+                    alert('user already on buddylist');
+                    return rerject('user already on buddylist');
+                  }
+                }
+
                 buddylistFile.buddylist.push(UserEntry);
                 //update existing buddylist
                 console.log('update buddylist now!',UserEntry);
@@ -110,6 +119,41 @@ var buddylist = function(){
 	    	})
 	    	.catch(reject);
     	});
+    };
+    this.deleteBuddy = function(userid){
+      let self = this;
+      return new Promise((resolve, reject)=>{
+        this.get()
+        .then((buddylistFile)=>{
+              //check if buddylistfile exists
+              if(!buddylistFile){
+                //create new buddylist
+                resolve();
+              }else{
+                //check if buddy already exists
+                for (let i in buddylistFile.buddylist){
+                  if(parseInt(buddylistFile.buddylist[i].id) == parseInt(userid)){
+                    buddylistFile.buddylist.splice(i,1)
+                    console.log(buddylistFile.buddylist);
+                  }
+                }
+
+                self.update({
+                  file:buddylistFile.file,
+                  buddylist:buddylistFile.buddylist
+                }).then((res)=>{
+                  request.delete(requestObj.id)
+                  .then((data)=>{
+                      resolve(data);
+                  })
+                  .catch((e)=>{
+                      reject(e)
+                  })
+                })
+              }          
+        })
+        .catch(reject);
+      });
     };
 }
 
