@@ -5,9 +5,13 @@
         </header>
         <div class="dialogue">
           <ul>
-            <li v-for="message in messages">
-              <span class="username">{{user.username}}</span>
-              <span class="message">{{message}}</span>
+            <li v-for="message in messages"  v-bind:class="{ out: message.author!=userid }">
+              <div  v-bind:class="{ out: message.author!=userid }">
+                <span class="username" v-if="message.author==userid">{{user.username}}</span>
+                <span class="username" v-if="message.author!=userid">{{authorinfo.username}}</span>
+                <div class="message in" v-if="message.author==userid">{{message.message}}</div>
+                <div class="message out" v-if="message.author!=userid">{{message.message}}</div>
+              </div>
             </li>
           </ul>
         </div>
@@ -100,7 +104,9 @@ export default {
   data () {
     return {
       messages:[],
-      message:''
+      userid:0,
+      message:'',
+      authorinfo:{}
     }
   },
   props:['user'],
@@ -117,23 +123,26 @@ export default {
           //decrypt sender secret key and transform to 8 bit unsigned int
           let receiverSecretKey = Uint8Array.from(Object.values(cry.symDecrypt(receiverKey.secret_key, localStorage.password)));
 
-          console.log('receiverSecretKey');
-          console.log(receiverSecretKey);
-
           im.getMessages(this.user.id)
           .then((result)=>{
-            console.log('['+result.filecontent.slice(0,-1)+']');
-            let encryptedMessages = JSON.parse('['+result.filecontent.slice(0,-2)+']');
-            for(let i in encryptedMessages){
-              console.log('decryptedMessages['+i+']');
-              let symEncrypted = encryptedMessages[i];
-              console.log(symEncrypted);
-              //here somewhere is the error=>
-              let plaintext = cry.hybridDecrypt(encryptedMessages[i], cry.decodeBase64(senderKey.public_key), [],receiverSecretKey);
 
-              console.log(plaintext);
-              self.messages.push(plaintext);
+            function pushMessages(file){
+              let encryptedMessages = JSON.parse('['+file.filecontent.slice(0,-2)+']');
+              for(let i in encryptedMessages){
+                let symEncrypted = encryptedMessages[i];
+                //here somewhere is the error=>
+                let plaintext = cry.hybridDecrypt(encryptedMessages[i], cry.decodeBase64(senderKey.public_key), [],receiverSecretKey);
+
+                self.messages.push(plaintext);
+              }
             }
+            pushMessages(result[0]);
+            pushMessages(result[1]);
+            self.messages.sort(function(a,b){
+              // Turn your strings into dates, and then subtract them
+              // to get a value that is either negative, positive, or zero.
+              return new Date(b.timestamp) - new Date(a.timestamp);
+            });
           });
         })
         .catch((e)=>{
@@ -156,6 +165,15 @@ export default {
   },
   created:function(){
     this.loadMessages();
+    this.userid = localStorage.userid;
+    let self = this;
+    user.getInfo(localStorage.userid).
+    then(function(userinfo){
+      self.authorinfo = userinfo;
+      console.log(userinfo);
+    }).catch((e)=>{
+      console.log(e);
+    })
   }
 }
 </script>
@@ -170,10 +188,12 @@ export default {
   padding: 11px;
 }
 .dialogueFrame .dialogue{
-  position:absolute;
-  top:50px;
-  bottom:60px;
-  overflow:auto;
+  position: absolute;
+  top: 50px;
+  right: 0;
+  bottom: 60px;
+  left: 0;
+  overflow: auto;
 }
 .dialogueFrame footer {
   right: 0;
@@ -186,7 +206,6 @@ export default {
 }
 
 .dialogue ul li{
-    margin-top: 15px; 
     padding: 10px;
     padding-bottom: 10px;     
     -moz-user-select: text;    
@@ -194,13 +213,20 @@ export default {
 }
 
 .dialogue ul li .username{
-  position:absolute;
-  margin-top:-15px;
-  font-size:10px;
+  position: absolute;
+  margin-top: -15px;
+  font-size: 10px;
 }
 
 .dialogue ul li .message{
   font-size:16px;
+  padding:15px;
+  border:1px solid #c9c9c9;
+  border-radius:5px;
+  margin-top:15px;
+}
+.dialogue ul li.out{
+  margin-left:50px;
 }
 
 </style>
